@@ -11,6 +11,8 @@ import java.lang.Float;
  * @author (Nicholas Padinha)
  * @version (0.1)
  */
+// TODO: rewrite as a concrete class which takes a ProbabilityDistribution as a construction
+// argument.
 public abstract class AcceptanceRejectionSampler implements HasPDF, RandomSampler
 {
     // instance variables - replace the example below with your own
