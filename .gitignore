@@ -8,6 +8,13 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
+# Compiled source
+*.class
+
+# IDE-specific
+*.ctxt
+*.bluej
+
 # Windows Installer files
 *.cab
 *.msi
