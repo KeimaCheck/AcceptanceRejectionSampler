@@ -45,8 +45,8 @@ public class ARTableTest
     {
         ARTable aRTable1 = new ARTable();
         LinearTestPDF linearTe1 = new LinearTestPDF(0, 1, 1, 0);
-        assertEquals(1, aRTable1.getMax(linearTe1, linearTe1.getSupport()), 0.1);
-        assertEquals(0, aRTable1.getMin(linearTe1, linearTe1.getSupport()), 0.1);
+        assertEquals(1, linearTe1.getMax(linearTe1.getSupport(), 100), 0.1);
+        assertEquals(0, linearTe1.getMin(linearTe1.getSupport(), 100), 0.1);
     }
 
     @Test

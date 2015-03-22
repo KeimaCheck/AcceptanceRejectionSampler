@@ -12,12 +12,13 @@ import java.lang.Integer;
  * 
  * 
  * @author (Nicholas Padinha) 
- * @version (3/20/2015)
+ * @version (0.2, 3/22/2015)
  */
 public class ARTable
 {
     private Entry tableRoot;
     private Logger logger;
+    private ProbabilityDistribution distribution;
     
     // These fields used when saving or loading a previously-computed table
     private Interval[] loadAxisIntervals;
@@ -53,14 +54,15 @@ public class ARTable
      * 
      * Loads or computes a lookup table for a given distribution depending on its internal state
      */
-    public ARTable(HasPDF distribution) throws IntervalException
+    public ARTable(ProbabilityDistribution newDistribution) throws IntervalException
     {
+        distribution = newDistribution;
         // check if the distribution has a lookup table already computed and load it
         // if (FILE EXISTS: distribution.getName()) { LOAD TABLE FROM FILE }
         // else
         logger = new Logger("ARTable");
         logger.writeMessage("Initialized ARTable for distribution " + distribution.getName() + "\n");
-        computeLookupTable(distribution);
+        computeLookupTable();
         logger.writeMessage("Here is the table in sequential order:\n");
         logger.writeMessage(printInOrder());
     }
@@ -69,7 +71,7 @@ public class ARTable
     /**
      * Compute the lookup table for the given distribution
      */
-    private void computeLookupTable(HasPDF distribution) throws IntervalException
+    private void computeLookupTable() throws IntervalException
     {
         Interval support = distribution.getSupport();
         logger.writeMessage("Support of distribution (beginning root interval): "
@@ -77,8 +79,8 @@ public class ARTable
         
         // The max value of the density function on a given interval is used in building
         // the boxed envelope function. The min value is used in halting.
-        float maxGuess = getMax(distribution, support);
-        float minGuess = getMin(distribution, support);
+        float maxGuess = distribution.getMax(support, TEST_POINTS);
+        float minGuess = distribution.getMin(support, TEST_POINTS);
         logger.writeMessage("Distribution max: " + maxGuess + "\n");
         logger.writeMessage("Distribution min: " + minGuess + "\n");
         
@@ -86,18 +88,20 @@ public class ARTable
         logger.writeMessage("New entry created with root interval and found max value...\n");
         
         // Entry.subdivide handles the stopping logic and the recursing logic
-        tableRoot = newEntry.subdivide(distribution, minGuess);
+        tableRoot = newEntry.subdivide(minGuess);
         
         logger.writeMessage("Recursion complete. Table is ready for use.\n");
     }
     
     /**
      * Get (hopefully a good approximation to) the max value of a distribution on an interval
+     * Deprecated as of 0.2, reason: poor OO design choice putting this function here in the first place
      * 
      * @param distribution   the distribution
      * @param interval   the interval
      * @returns   the max value of the distribution over the interval
      */
+    @Deprecated
     public float getMax(HasPDF distribution, Interval interval)
     {
         float domainWidth = interval.getWidth();
@@ -120,11 +124,13 @@ public class ARTable
     
     /**
      * Basically identical to getMax, only gets the minimum instead
+     * Deprecated as of 0.2, reason: see ARTable.getMax()
      * 
      * @param distribution   the distribution
      * @param interval   the interval
      * @return   the min value of the density function of the distribution over the interval
      */
+    @Deprecated
     public float getMin(HasPDF distribution, Interval interval)
     {
         float domainWidth = interval.getWidth();
@@ -332,14 +338,13 @@ public class ARTable
          * difference between the current interval's max and the max calculated for the subintervals,
          * then return the current interval.
          * 
-         * @param distribution    the distribution in play
          * @param minGuess    the (algorithm's best guess at) the minimum value of the probability
          *                    density on this interval
          * 
          * @returns   either the current interval-max value pair, or the subtree replacing it.
          * 
          */
-        public Entry subdivide(HasPDF distribution, float minGuess) throws IntervalException
+        public Entry subdivide(float minGuess) throws IntervalException
         {
             // I should probably be writing this in a way that I don't have to pass
             // these arguments at all
@@ -380,8 +385,8 @@ public class ARTable
                 // the subdivision/partition and recurse on each of those
                 for(int i = 0; i < SUBDIVISIONS; i++)
                 {
-                    maxs[i] = getMax(distribution, newIntervals[i]);
-                    mins[i] = getMin(distribution, newIntervals[i]);
+                    maxs[i] = distribution.getMax(newIntervals[i], TEST_POINTS);
+                    mins[i] = distribution.getMin(newIntervals[i], TEST_POINTS);
                     subEntries[i] = new Entry(newIntervals[i], maxs[i]);
                     if (maxs[i] != box)
                     { 
@@ -402,15 +407,15 @@ public class ARTable
                 else
                 {
                     Entry returnedRoot = subEntries[MIDDLE_ENTRY];
-                    output = returnedRoot.subdivide(distribution, mins[MIDDLE_ENTRY]);
+                    output = returnedRoot.subdivide(mins[MIDDLE_ENTRY]);
                     logger.writeMessage("Finished recursing on middle part of " + print() +"\n");
                     
                     Entry returnedLeftChild = subEntries[LEFT_ENTRY];
-                    output.prepend(returnedLeftChild.subdivide(distribution, mins[LEFT_ENTRY]));
+                    output.prepend(returnedLeftChild.subdivide(mins[LEFT_ENTRY]));
                     logger.writeMessage("Finished recursing on left part of " + print() + "\n");
                     
                     Entry returnedRightChild = subEntries[RIGHT_ENTRY];
-                    output.postpend(returnedRightChild.subdivide(distribution, mins[RIGHT_ENTRY]));
+                    output.postpend(returnedRightChild.subdivide(mins[RIGHT_ENTRY]));
                     logger.writeMessage("Finished recursing on right part of " + print() + "\n");
                 }
             }

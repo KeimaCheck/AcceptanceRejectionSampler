@@ -5,12 +5,8 @@
  * @author (Nicholas Padinha)
  * @version (3/22/2015)
  */
-public class QuadraticTestPDF implements HasPDF
+public class QuadraticTestPDF extends ProbabilityDistribution
 {
-    // instance variables - replace the example below with your own
-    private String name;
-    private Interval support;
-    
     // think aX^2 + bx + c if this worries you. Gosh.
     private float a;
     private float b;
@@ -26,24 +22,9 @@ public class QuadraticTestPDF implements HasPDF
         a = quad;
         b = lin;
         c = constant;
+        name = createName();
     }
-    
-    /**
-     * Contractual obligation.
-     */
-    public String getName()
-    {
-        return name;
-    }
-    
-    /**
-     * Contractual obligation.
-     */
-    public Interval getSupport()
-    {
-        return support;
-    }
-    
+        
     /**
      * Contractual obligation.
      */
@@ -56,7 +37,7 @@ public class QuadraticTestPDF implements HasPDF
      * Create a name for this distribution:
      * Left-Right-QuadTerm-LinearTerm-ConstantTerm-QuadrDistr
      */
-    private String createName()
+    public String createName()
     {
         return support.getLeft() + "-"
                 + support.getRight() + "-"

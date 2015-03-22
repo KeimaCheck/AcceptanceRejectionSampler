@@ -9,21 +9,9 @@ public abstract class ProbabilityDistribution
 {
     // instance variables - replace the example below with your own
     private int x;
-    private String name;
-    private Interval support;
+    protected String name;
+    protected Interval support;
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y    a sample parameter for a method
-     * @return        the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
-    }
-    
     /**
      * Getter method for the name of this distribution
      * 
@@ -60,7 +48,24 @@ public abstract class ProbabilityDistribution
      * @param overInterval   the interval to find the max value over
      * @param testPoints    the number of points to check the function at
      */
-    abstract public float getMax(Interval overInterval, int testPoints);
+    public float getMax(Interval overInterval, int testPoints)
+    {
+        float domainWidth = overInterval.getWidth();
+        float evalPoint = overInterval.getLeft();
+        float subparcel = domainWidth / testPoints;
+        float max = probabilityDensity(evalPoint);
+        float a;
+        
+        // Check some (reasonably) large number of evenly spaced points throughout the interval
+        // and return the max value obtained on those points
+        for (int i = 0; i < testPoints; i++)
+        {
+            evalPoint += subparcel;
+            a = probabilityDensity(evalPoint);
+            if (max < a) { max = a; }
+        }
+        return max;
+    }
     
     /**
      * Return the minimum value of the density function at a specified number of evenly
@@ -69,5 +74,22 @@ public abstract class ProbabilityDistribution
      * @param overInterval   the interval to find the min value over
      * @param testPoints    the number of points to check the function at
      */    
-    abstract public float getMin(Interval overInterval, int testPoints);
+    public float getMin(Interval overInterval, int testPoints)
+    {
+        float domainWidth = overInterval.getWidth();
+        float evalPoint = overInterval.getLeft();
+        float subparcel = domainWidth / testPoints;
+        float min = probabilityDensity(evalPoint);
+        float a;
+        
+        // See comment in getMax()
+        for (int i = 0; i < testPoints; i++)
+        {
+            evalPoint += subparcel;
+            a = probabilityDensity(evalPoint);
+            if (min > a) { min = a; }
+        }
+        return min;        
+    }
+    
 }

@@ -13,13 +13,36 @@ import java.lang.Float;
  */
 // TODO: rewrite as a concrete class which takes a ProbabilityDistribution as a construction
 // argument.
-public abstract class AcceptanceRejectionSampler implements HasPDF, RandomSampler
+public class AcceptanceRejectionSampler
 {
     // instance variables - replace the example below with your own
     private float x;
     private float y;
     private Random generator;
+    private ProbabilityDistribution distribution;
     private ARTable lookup;
+    
+    /**
+     * Constructor for AcceptanceRejectionSampler objects
+     */
+    public AcceptanceRejectionSampler()
+    {
+        initializeGenerator();
+        distribution = null;
+        lookup = null;
+    }
+    
+    /**
+     * Constructor for AcceptanceRejectionSampler
+     */
+    public AcceptanceRejectionSampler(ProbabilityDistribution newDistribution)
+                                      throws IntervalException
+    {
+        initializeGenerator();
+        distribution = newDistribution;
+        initializeLookup();
+    }
+    
     
     /**
      * Instantiates a random number generator for use by this class
@@ -34,7 +57,7 @@ public abstract class AcceptanceRejectionSampler implements HasPDF, RandomSample
      */
     public void initializeLookup() throws IntervalException
     {
-        lookup = new ARTable(this);
+        lookup = new ARTable(distribution);
     }
     
     /**
@@ -65,18 +88,8 @@ public abstract class AcceptanceRejectionSampler implements HasPDF, RandomSample
         do
         {
             samplePlaneUniformly();
-        } while (y >= probabilityDensity(x));   // stop when y is found < f(x)
+        } while (y >= distribution.probabilityDensity(x));   // stop when y is found < f(x)
         
         return x;
     }
-    
-    /**
-     * The probability density of the distribution being sampled from. For
-     * best performance this should be normalized to have a max value of 1, and
-     * for sanity the density function should decay to 0 at infinity.
-     * 
-     * @param x   a float, the point on the x-axis where we want the density
-     * @return    the density
-     */
-    public abstract float probabilityDensity(float x);
 }

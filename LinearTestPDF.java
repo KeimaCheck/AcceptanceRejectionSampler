@@ -5,11 +5,9 @@
  * @author (Nicholas Padinha) 
  * @version (3/22/2015)
  */
-public class LinearTestPDF implements HasPDF
+public class LinearTestPDF extends ProbabilityDistribution
 {
-    // instance variables - replace the example below with your own
-    private String name;
-    private Interval support;
+    // y = mx + b
     private float m;
     private float b;
 
@@ -31,27 +29,11 @@ public class LinearTestPDF implements HasPDF
     }
     
     /**
-     * Contractual obligation.
-     */
-    public Interval getSupport()
-    {
-        return support;
-    }
-    
-    /**
      * Create a name for this distribution: LeftEndpoint-RightEndpoint-Slope-Intercept-LinearDistr
      */
-    private String createName()
+    public String createName()
     {
         return support.getLeft() + "-" + support.getRight() + "-" + m + "-" + b + "LinearDistr";
-    }
-    
-    /**
-     * Contractual obligation
-     */
-    public String getName()
-    {
-        return name;
     }
     
     /**
