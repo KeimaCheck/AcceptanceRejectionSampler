@@ -7,6 +7,10 @@
  */
 public class IntervalException extends Exception
 {
+    private Interval argument1;
+    private Interval argument2;
+    
+    
     /**
      * Constructor for objects of class OverlapException
      */
@@ -21,5 +25,12 @@ public class IntervalException extends Exception
     public IntervalException(String message)
     {
         super(message);
+    }
+    
+    public IntervalException(String message, Interval firstArg, Interval secondArg)
+    {
+        super(message + " " + firstArg.print() + ", " + secondArg.print());
+        argument1 = firstArg;
+        argument2 = secondArg;
     }
 }

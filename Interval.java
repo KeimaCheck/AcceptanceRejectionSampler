@@ -58,7 +58,7 @@ public class Interval
         } else if (left == i.left && right == i.right)
         {
             return 0;
-        } else { throw new IntervalException("Attempted to compare overlapping intervals"); }
+        } else { throw new IntervalException("Overlapping comparison:",this, i); }
         
     }
     
@@ -110,5 +110,13 @@ public class Interval
     {
         String output = "(" + left + "," + right + ")";
         return output;
+    }
+    
+    /**
+     * Check whether the given number is in this interval.
+     */
+    public boolean contains(float x)
+    {
+        return (x <= right && x >= left);
     }
 }

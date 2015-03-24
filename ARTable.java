@@ -301,9 +301,20 @@ public class ARTable
                                 + print() + ".\n");
             Entry leastEntryOfThis = leftmost();
             Entry greatestEntryOfHead = head.rightmost();
-            int check = greatestEntryOfHead.axisInterval.compareTo(leastEntryOfThis.axisInterval);
+            
+            int check = -2;     // magic number yesss
+            String errorMessage = "Attempted to prepend a tree which was not wholly less than this tree";
+            try
+            {
+                check = greatestEntryOfHead.axisInterval.compareTo(leastEntryOfThis.axisInterval);
+            } catch (IntervalException e)
+            {
+                logger.writeMessage(e.getMessage());
+                check = -2;     // sanity
+                errorMessage = "IntervalException thrown. See log";
+            } 
 
-            assert (check == -1): "Attempted to prepend a tree which was not wholly less than this tree";
+            assert (check == -1): errorMessage;
             leastEntryOfThis.leftChild = head;
             logger.writeMessage("Successful.\n");
         }
@@ -321,9 +332,20 @@ public class ARTable
                                 + print() + ".\n");
             Entry greatestEntryOfThis = rightmost();
             Entry leastEntryOfTail = tail.leftmost();
-            int check = leastEntryOfTail.axisInterval.compareTo(greatestEntryOfThis.axisInterval);
             
-            assert (check == 1): "Attempted to prepend a tree which was not wholly greater than this tree";
+            int check = -2;     // magic number yesss
+            String errorMessage = "Attempted to prepend a tree which was not wholly greater than this tree";
+            try
+            {
+                check = leastEntryOfTail.axisInterval.compareTo(greatestEntryOfThis.axisInterval);
+            } catch (IntervalException e)
+            {
+                logger.writeMessage(e.getMessage());
+                check = -2;     // sanity
+                errorMessage = "IntervalException thrown. See log";
+            } 
+            
+            assert (check == 1): errorMessage;
             greatestEntryOfThis.rightChild = tail;
             logger.writeMessage("Successful.\n");
         }
@@ -346,8 +368,10 @@ public class ARTable
          */
         public Entry subdivide(float minGuess) throws IntervalException
         {
-            // I should probably be writing this in a way that I don't have to pass
-            // these arguments at all
+            // there's an annoying bug in here somewhere--some kind of floating point error
+            // as of 3/24/15, it seems like the bug has to do with interval subdivision,
+            // based on error messages returned by the Entry.prepend/postpend methods.
+            
             logger.writeMessage("Subdividing " + print() + "\n");
             float trapezoidToBoxRatio = (1.0f + (minGuess / box)) / 2.0f;
             float currentWidth = axisInterval.getWidth();
