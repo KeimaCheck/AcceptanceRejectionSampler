@@ -1,6 +1,7 @@
 import java.util.Hashtable;
 import java.lang.Float;
 import java.lang.Integer;
+import java.util.Random;
 /**
  * Implements generating and sampling from a boxed envelope function for use in
  * acceptance-rejection PRNG. The primary data structure is that of a binary search
@@ -20,6 +21,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     private Entry tableRoot;
     private Logger logger;
     private ProbabilityDistribution distribution;
+    private Random rng;
     
     // These fields used when saving or loading a previously-computed table
     private Interval[] loadAxisIntervals;
@@ -65,6 +67,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      */
     public ARTable(ProbabilityDistribution newDistribution) throws IntervalException
     {
+        rng = new Random(System.currentTimeMillis());
         distribution = newDistribution;
         // check if the distribution has a lookup table already computed and load it
         // if (FILE EXISTS: distribution.getName()) { LOAD TABLE FROM FILE }
@@ -83,7 +86,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
         //             P_i+1,left = P_i,right for i in (0,n-1)
         //             P_n,right = 1
-        // computeProbabilityIntervals();
+        computeProbabilityIntervals();
     }
 
   
@@ -119,7 +122,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     
     private void computeProbabilityIntervals() throws IntervalException
     {
-        tableRoot.computeProbabilityIntervals();
+        tableRoot.computeProbabilityIntervals(0);
     }
     
     /**
@@ -208,30 +211,45 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         return tableRoot.printRecursive();
     }
     
-    public float probabilityDensity(float x)
+    /**
+     * 
+     * 
+     * @returns The probability density at the point x.
+     */
+    public float probabilityDensity(float x) throws IntervalException, IntervalTreeException
     {
-        // find the interval x belongs to, return thatInterval.box;
-        // obvious placeholder
-        return 0;
+        Entry containingBox = tableRoot.findBelow(x, SAMPLING_MODE);
+        
+        return containingBox.box;
     }
     
-    public float sample()
+    /**
+     * Sample the boxed envelope distribution represented by this table
+     * 
+     * @returns A randomly-generated number sampled from the boxed envelope distribution.
+     */
+    public float sample() throws IntervalException, IntervalTreeException
     {
-        // draw a uniform float, (0,1)
-        float uniformRandom = 0; // note that, once again, this is an obvious placeholder so that I could do a quick sanity-compile
+
+        float uniformRandom = rng.nextFloat();
 
         // find the entry whose probabilityInterval contains that float,
         // get its axisInterval
         Interval sampleFromWithin = tableRoot.findBelow(uniformRandom,PROBABILITY_MODE).axisInterval;
         
-        // redraw uniformRandom and affinely transform it into a uniform float between
-        // sampleFromWithin.left and sampleFromWithin.right
         float scale = sampleFromWithin.getWidth();
         float translate = sampleFromWithin.getLeft();
+        
         // refresh uniformRandom
+        uniformRandom = rng.nextFloat();
+        
+        // affine transform uniformRandom so that it is a uniform random float
+        // between sampleFromWithin.left and sampleFromWithin.right
         uniformRandom *= scale;
         uniformRandom += translate;
         
+        // uniformRandom now contains a number effectively drawn at random from the distribution
+        // represented by this table
         return uniformRandom;
     }
     
@@ -337,17 +355,57 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
          */
         public Entry findBelow(float findNumber) throws IntervalException, IntervalTreeException
         {
-            // obvious placeholder
-            return null;
+            Entry output = null;
+            
+            if (findNumber < axisInterval.getLeft())
+            {
+                if (leftChild!= null) { output = leftChild.findBelow(findNumber); }
+                else {throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
+            } else if (findNumber > axisInterval.getRight())
+            {
+                if (rightChild != null) { output = rightChild.findBelow(findNumber); }
+                else { throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
+            } else
+            {
+                assert axisInterval.contains(findNumber);
+                output = this;
+            }
+            
+            assert output != null;
+            return output;
         }
         
         /**
-         * Write a docstring, chump
+         * Multi-purpose search function that can find an entry whose probabilityInterval
+         * or axisInterval contains a given number. A mode paramter chooses which
+         * interval system to search.
          */
-        public Entry findBelow(float findNumber, int mode)
+        public Entry findBelow(float findNumber, int mode) throws IntervalException, IntervalTreeException
         {
-            // obvious placeholder
-            return null;
+            Interval searchInterval = null;
+            if (mode == PROBABILITY_MODE) { searchInterval = probabilityInterval; }
+            else if (mode == SAMPLING_MODE) { searchInterval = axisInterval; }
+            else { throw new IntervalTreeException("Search mode must be probabiity or sampling"); }
+            assert searchInterval != null;
+            
+            Entry output = null;
+            
+            if (findNumber < searchInterval.getLeft())
+            {
+                if (leftChild!= null) { output = leftChild.findBelow(findNumber, mode); }
+                else {throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
+            } else if (findNumber > searchInterval.getRight())
+            {
+                if (rightChild != null) { output = rightChild.findBelow(findNumber, mode); }
+                else { throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
+            } else
+            {
+                assert searchInterval.contains(findNumber);
+                output = this;
+            }
+            
+            assert output != null;
+            return output;
         }
         
         /**
@@ -555,24 +613,36 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         /**
          * Implements the recursive logic of computing the probability intervals used for sampling.
          * 
+         * 
+         * @param leftEdge
+         * 
+         * @returns the rightmost endpoint of the subtree of probabilityIntervals rooted at this node
          */
-        public float computeProbabilityIntervals()
+        public float computeProbabilityIntervals(float leftEdge) throws IntervalException
         {
-            // be supplied with the rightmost endpoint that the calling tree knows about
-            // set that as the leftmost endpoint of the left subtree and proceed
-
-            // be supplied with the rightmost endpoint of the left subtree,
-            // set that as the left endpoint of this entry's probabilityInterval,
-            // compute the right endpoint
+            float leftEndpoint = 0;
+            float rightEndpoint;
+            float rightEdge = 0;
             
-            // supply the right subtree with the right endpoint of this entry's probabilityInterval,
+            // supplied with the rightmost endpoint that the calling tree knows about
+            // set that as the leftmost endpoint of the left subtree and proceed
+            if (leftChild != null)
+            {
+                leftEndpoint = leftChild.computeProbabilityIntervals(leftEdge);
+            } else { leftEndpoint = leftEdge; }
+
+            rightEndpoint = leftEndpoint + (boxArea/totalBoxArea);
+            probabilityInterval = new Interval(leftEndpoint, rightEndpoint);
+
             // proceed on the right subtree
+            if (rightChild != null)
+            {
+                rightEdge = rightChild.computeProbabilityIntervals(rightEndpoint);
+            } else { rightEdge = rightEndpoint; }
             
             // return the rightmost endpoint of the probability intervals under this entry,
             // so that the next higher layer of recursion can use that as the left endpoint
-            
-            // obvious placeholder
-            return 0;
+            return rightEdge;
         }
         
         /**
