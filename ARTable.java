@@ -26,6 +26,10 @@ public class ARTable
     private Interval[] loadProbabilityIntervals;
     private float[] loadBoxes;
     
+    // These fields store data used in sampling the distribution
+    private int numberOfBoxes;
+    private float totalBoxArea;
+    
     // These statics control the running and stopping behavior of the algorithm
     private static int TEST_POINTS = 100;
     private static int SUBDIVISIONS = 3;
@@ -69,11 +73,13 @@ public class ARTable
         // next we need to compute the data used for sampling the boxed distribution
         // first traverse the tree, computing for each interval the area of the box there (max * width)
         // sum the computed areas while traversing and keep track of the total number of partitions
+        computeAreas();
         // traverse the tree again, computing A_i = (Area of ith box)/(Total area under BE graph)
         // and setting P_0,left = 0
         //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
         //             P_i+1,left = P_i,right for i in (0,n-1)
         //             P_n,right = 1
+        // computeProbabilityIntervals();
     }
 
   
@@ -100,6 +106,16 @@ public class ARTable
         tableRoot = newEntry.subdivide(minGuess);
         
         logger.writeMessage("Recursion complete. Table is ready for use.\n");
+    }
+    
+    private void computeAreas() throws IntervalException
+    {
+        numberOfBoxes = tableRoot.computeAreas();
+    }
+    
+    private void computeProbabilityIntervals() throws IntervalException
+    {
+        tableRoot.computeProbabilityIntervals();
     }
     
     /**
@@ -151,6 +167,7 @@ public class ARTable
         // See comment in getMax()
         for (int i = 0; i < TEST_POINTS; i++)
         {
+            // next line causes a lack of precision for the same reason that subdivide was all screwy
             evalPoint += subparcel;
             a = distribution.probabilityDensity(evalPoint);
             if (min > a) { min = a; }
@@ -210,6 +227,8 @@ public class ARTable
         public Interval axisInterval;
         public Interval probabilityInterval;
         public float box;
+        
+        public float boxArea;
         
         /**
          * Constructor for objects of type Entry
@@ -454,6 +473,48 @@ public class ARTable
             }
             
             return output;
+        }
+
+        /**
+         * Computes the area of this entry, add it to the total area for the whole table,
+         * and do the same for each subtree. Also do the accounting on the total number of
+         * intervals in the tree.
+         * 
+         * @return the number of intervals in the subtree under this entry, including this entry's.
+         */
+        public int computeAreas()
+        {
+            // compute area, update total
+            boxArea = axisInterval.getWidth() * box;
+            totalBoxArea += boxArea;
+            
+            // account for this entry's interval in the count
+            int subtreeTotalIntervals = 1;
+
+            if (leftChild != null) { subtreeTotalIntervals += leftChild.computeAreas(); }
+            if (rightChild != null) { subtreeTotalIntervals += rightChild.computeAreas(); }
+            
+            return subtreeTotalIntervals;
+        }
+        
+        /**
+         * Implements the recursive logic of computing the probability intervals used for sampling.
+         * 
+         */
+        public computeProbabilityIntervals()
+        {
+            // be supplied with the rightmost endpoint that the calling tree knows about
+            // set that as the leftmost endpoint of the left subtree and proceed
+
+            // be supplied with the rightmost endpoint of the left subtree,
+            // set that as the left endpoint of this entry's probabilityInterval,
+            // compute the right endpoint
+            
+            // supply the right subtree with the right endpoint of this entry's probabilityInterval,
+            // proceed on the right subtree
+            
+            // return the rightmost endpoint of the probability intervals under this entry,
+            // so that the next higher layer of recursion can use that as the left endpoint
         }
         
         /**
