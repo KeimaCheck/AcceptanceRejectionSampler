@@ -70,10 +70,12 @@ public class ARTableTest
         Logger log = new Logger("ART-Density-Test");
         
         ARTable aRTable1 = new ARTable(polynomi1);
-        int iterations = 100;
+        int iterations = 1000;
         float x[] = new float[iterations];
         float errors[] = new float[iterations];
         float diff;
+        
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < iterations; i++)
         {
             x[i] = aRTable1.sample();
@@ -81,6 +83,7 @@ public class ARTableTest
             if (diff < 0) { errors[i] = -1*diff; }
             else { errors[i] = 0; }
         }
+        long endTime = System.currentTimeMillis();
         
         int errorCount = 0;
         float errorTotal = 0;
@@ -97,9 +100,12 @@ public class ARTableTest
         float erroneousAvg = errorTotal/errorCount;
         float errorsAllAvg = errorTotal/iterations;
         
+        long sampleTime = endTime - startTime;
+        
         log.writeMessage("Percentage of time erroneous samples found: " + errPerc + "%\n");
         log.writeMessage("Average error among erroneous samples: " + erroneousAvg + "\n");
-        log.writeMessage("Average error amond al samples: " + errorsAllAvg + "\n");
+        log.writeMessage("Average error among al samples: " + errorsAllAvg + "\n");
+        log.writeMessage("Sampled in " + sampleTime + " ms.\n");
         
         assert errorTotal == 0;
         
