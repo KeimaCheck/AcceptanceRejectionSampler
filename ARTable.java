@@ -117,6 +117,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     
     private void computeAreas() throws IntervalException
     {
+        totalBoxArea = 0;
         logger.writeMessage("Traversing tree to compute area under graph...\n");
         numberOfBoxes = tableRoot.computeAreas();
         logger.writeMessage("Total area computed: " + totalBoxArea + "\n"
@@ -607,14 +608,14 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             boxArea = axisInterval.getWidth() * box;
             totalBoxArea += boxArea;
             
+            logger.writeMessage("Box at " + axisInterval.print() + " has area " + boxArea + "\n");
+            logger.writeMessage("Found total area " + totalBoxArea + " so far.\n"); 
+            
             // account for this entry's interval in the count
             int subtreeTotalIntervals = 1;
 
             if (leftChild != null) { subtreeTotalIntervals += leftChild.computeAreas(); }
             if (rightChild != null) { subtreeTotalIntervals += rightChild.computeAreas(); }
-            
-            logger.writeMessage("Box at " + axisInterval.print() + " has area " + boxArea + "\n");
-            logger.writeMessage("Found total area " + totalBoxArea + " so far.\n"); 
             
             return subtreeTotalIntervals;
         }
