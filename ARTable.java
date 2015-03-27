@@ -112,17 +112,27 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         // Entry.subdivide handles the stopping logic and the recursing logic
         tableRoot = newEntry.subdivide(minGuess);
         
-        logger.writeMessage("Recursion complete. Table is ready for use.\n");
+        logger.writeMessage("Recursion complete. Table is ready for next step.\n");
     }
     
     private void computeAreas() throws IntervalException
     {
+        logger.writeMessage("Traversing tree to compute area under graph...\n");
         numberOfBoxes = tableRoot.computeAreas();
+        logger.writeMessage("Total area computed: " + totalBoxArea + "\n"
+                            + "Number of boxes: " + numberOfBoxes + "\n"
+                            + "Table is ready for next step.\n");
     }
     
     private void computeProbabilityIntervals() throws IntervalException
     {
+        logger.writeMessage("Traversing tree to assign probabilityIntervals...\n");
         tableRoot.computeProbabilityIntervals(0);
+        // Fix rightmost interval
+        Entry rightmost = tableRoot.rightmost();
+        rightmost.probabilityInterval = new Interval(rightmost.probabilityInterval.getLeft(), 1);
+        logger.writeMessage("probabilityIntervals computed. Table is ready for use.\n");
+        
     }
     
     /**
@@ -607,6 +617,9 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             if (leftChild != null) { subtreeTotalIntervals += leftChild.computeAreas(); }
             if (rightChild != null) { subtreeTotalIntervals += rightChild.computeAreas(); }
             
+            logger.writeMessage("Box at " + axisInterval.print() + " has area " + boxArea + "\n");
+            logger.writeMessage("Found total area " + totalBoxArea + " so far.\n"); 
+            
             return subtreeTotalIntervals;
         }
         
@@ -639,6 +652,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             {
                 rightEdge = rightChild.computeProbabilityIntervals(rightEndpoint);
             } else { rightEdge = rightEndpoint; }
+            
+            logger.writeMessage("axisInterval: " + axisInterval.print() + ", probabilityInterval: " + probabilityInterval.print());
             
             // return the rightmost endpoint of the probability intervals under this entry,
             // so that the next higher layer of recursion can use that as the left endpoint
