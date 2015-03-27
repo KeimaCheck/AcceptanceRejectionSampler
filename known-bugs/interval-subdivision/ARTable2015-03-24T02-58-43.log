@@ -1,0 +1,270 @@
+Initialized ARTable for distribution 0.0-1.0-4.0-0.0LinearDistr
+
+Support of distribution (beginning root interval): (0.0,1.0)
+
+Distribution max: 3.9999974
+
+Distribution min: 0.0
+
+New entry created with root interval and found max value...
+
+Subdividing Entry with axisInterval (0.0,1.0) and box height 3.9999974
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.5. Width: 1.0)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 1.3333324
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 2.6666656
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 3.9999988
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.33333334,0.6666667) and box height 2.6666656
+
+
+Trap-to-box ratio: 0.7500001 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Finished recursing on middle part of Entry with axisInterval (0.0,1.0) and box height 3.9999974
+
+
+Subdividing Entry with axisInterval (0.0,0.33333334) and box height 1.3333324
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.5. Width: 0.33333334)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.4444448
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.88888687
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 1.3333354
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.11111111,0.22222222) and box height 0.88888687
+
+
+Trap-to-box ratio: 0.7500006 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Finished recursing on middle part of Entry with axisInterval (0.0,0.33333334) and box height 1.3333324
+
+
+Subdividing Entry with axisInterval (0.0,0.11111111) and box height 0.4444448
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.5. Width: 0.11111111)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.14814821
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.2962965
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 0.44444364
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.037037037,0.074074075) and box height 0.2962965
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.7499998. Width: 0.037037037)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.1975306
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.24691331
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 0.29629603
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.049382716,0.061728396) and box height 0.24691331
+
+
+Trap-to-box ratio: 0.90000045 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Finished recursing on middle part of Entry with axisInterval (0.037037037,0.074074075) and box height 0.2962965
+
+
+Subdividing Entry with axisInterval (0.037037037,0.049382716) and box height 0.1975306
+
+
+Trap-to-box ratio: 0.8750005 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Prepending tree under Entry with axisInterval (0.037037037,0.049382716) and box height 0.1975306
+ to tree under Entry with axisInterval (0.049382716,0.061728396) and box height 0.24691331
+.
+
+Successful.
+
+Finished recursing on left part of Entry with axisInterval (0.037037037,0.074074075) and box height 0.2962965
+
+
+Subdividing Entry with axisInterval (0.061728396,0.074074075) and box height 0.29629603
+
+
+Trap-to-box ratio: 0.91666704 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Postpending tree under Entry with axisInterval (0.061728396,0.074074075) and box height 0.29629603
+ to tree under Entry with axisInterval (0.049382716,0.061728396) and box height 0.24691331
+.
+
+Successful.
+
+Finished recursing on right part of Entry with axisInterval (0.037037037,0.074074075) and box height 0.2962965
+
+
+Finished recursing on middle part of Entry with axisInterval (0.0,0.11111111) and box height 0.4444448
+
+
+Subdividing Entry with axisInterval (0.0,0.037037037) and box height 0.14814821
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.5. Width: 0.037037037)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.04938273
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.09876526
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 0.14814788
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.012345679,0.024691358) and box height 0.09876526
+
+
+Trap-to-box ratio: 0.7500005 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Finished recursing on middle part of Entry with axisInterval (0.0,0.037037037) and box height 0.14814821
+
+
+Subdividing Entry with axisInterval (0.0,0.012345679) and box height 0.04938273
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.5. Width: 0.012345679)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.01646092
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.032921843
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 0.04938275
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.004115226,0.008230452) and box height 0.032921843
+
+
+Entry failed first stopping test.
+
+(Trap-to-box ratio: 0.74999976. Width: 0.004115226)
+
+vs (0.75, 1.0E-6)
+
+Entry's 0th part exhibits max value 0.021947885
+
+Therefore I will recursively act on all three parts.
+
+Entry's 1th part exhibits max value 0.027434854
+
+Therefore I will recursively act on all three parts.
+
+Entry's 2th part exhibits max value 0.03292182
+
+Therefore I will recursively act on all three parts.
+
+Subdividing Entry with axisInterval (0.0054869684,0.0068587107) and box height 0.027434854
+
+
+Trap-to-box ratio: 0.89999986 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Finished recursing on middle part of Entry with axisInterval (0.004115226,0.008230452) and box height 0.032921843
+
+
+Subdividing Entry with axisInterval (0.004115226,0.0054869684) and box height 0.021947885
+
+
+Trap-to-box ratio: 0.87499976 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Prepending tree under Entry with axisInterval (0.004115226,0.0054869684) and box height 0.021947885
+ to tree under Entry with axisInterval (0.0054869684,0.0068587107) and box height 0.027434854
+.
+
+Successful.
+
+Finished recursing on left part of Entry with axisInterval (0.004115226,0.008230452) and box height 0.032921843
+
+
+Subdividing Entry with axisInterval (0.00685871,0.008230452) and box height 0.03292182
+
+
+Trap-to-box ratio: 0.9166665 > 0.75
+
+Therefore, I will stop subdividing and return this Entry
+
+Postpending tree under Entry with axisInterval (0.00685871,0.008230452) and box height 0.03292182
+ to tree under Entry with axisInterval (0.0054869684,0.0068587107) and box height 0.027434854
+.
+
+Overlapping comparison: (0.00685871,0.008230452), (0.0054869684,0.0068587107)

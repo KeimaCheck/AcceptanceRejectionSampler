@@ -16,8 +16,7 @@ $RECYCLE.BIN/
 *.bluej
 
 # logs
-logs
-*.log
+logs/**
 
 # Windows Installer files
 *.cab

@@ -117,6 +117,43 @@ public class IntervalTest
         Interval interval5 = wonkySubdivisionTwo.concatenate(wonkySubdivisionOne);
         assertEquals(true, interval5.equals(wonkyInterval));
     }
+    
+    @Test
+    public void subdivideFPTest() throws IntervalException
+    {
+        int parts = 1;
+        for (int j = 1; j < 7; j++)
+        {
+            parts *= 10;
+            Interval interval1 = new Interval(0,1);
+            Interval[] subdivision = interval1.subdivideEvenly(parts);
+            for(int i = 1; i < parts; i++)
+            {
+                assert subdivision[i].getLeft() == subdivision[i-1].getRight();
+            }
+        }
+    }
+    
+    @Test
+    public void evenSubdivisionTest() throws IntervalException
+    {
+        int parts = 1;
+        Logger log = new Logger("Even_Subdivision_Test");
+        for (int j = 1; j < 5; j++)
+        {
+            parts *= 10;
+            Interval interval1 = new Interval(0,1);
+            Interval[] subdivision = interval1.subdivideEvenly(parts);
+            float [] widths = new float[parts];
+            log.writeMessage("Ready to test 10 to the " + j + " intervals\n");
+            log.writeMessage("Index | Width\n");
+            for (int i = 0; i <parts; i++)
+            {
+                widths[i] = subdivision[i].getWidth();
+            }
+            log.writeEnumerated(widths);
+        }
+    }
 }
 
 

@@ -9,6 +9,8 @@ public class IntervalException extends Exception
 {
     private Interval argument1;
     private Interval argument2;
+    private float leftEndpoint;
+    private float rightEndpoint;
     
     
     /**
@@ -32,5 +34,12 @@ public class IntervalException extends Exception
         super(message + " " + firstArg.print() + ", " + secondArg.print());
         argument1 = firstArg;
         argument2 = secondArg;
+    }
+    
+    public IntervalException(float left, float right)
+    {
+        super("Improper Interval: (" + left + ", "+ right + ")");
+        leftEndpoint = left;
+        rightEndpoint = right;
     }
 }

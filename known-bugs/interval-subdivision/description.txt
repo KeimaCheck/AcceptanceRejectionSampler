@@ -1,0 +1,46 @@
+Summary
+While running tests on the ARTable class, I noticed that some IntervalExceptions were being triggered by attempting to compare overlapping intervals, an explicitly forbidden operation. Weirdly enough, I thought the code was written in such a way as to prevent that from ever happening, but clearly something is wrong.
+
+Steps taken
+First of all, I had to add some error checking code to report with more detail the circumstances of IntervalExceptions triggered by overlapping comparisons.
+Next, I need to write a test for the method Interval.subdivieEvenly(int parts)
+to see if it's actually doing what it should. This and concatenate are the only parts of the code that can produce a new Interval from others, and the error happens before concatenate is even called, so it's probably here somewhere.
+
+Predictably, that test failed and rewriting the subdivision routine to the following allowed it to pass in most cases:
+
+        float newWidth = width/parts;
+        Interval output[] = new Interval[parts];
+        float newLeft = left;
+        float newRight = left + newWidth;
+        for (int i = 0; i < parts-1; i++)
+        {
+            // the following causes a floating point error
+            // output[i] = new Interval(newLeft + (i * newWidth), newRight + (i * newWidth));
+
+            output[i] = new Interval(newLeft,newRight);
+            newLeft = newRight;
+            newRight += newWidth;
+        }
+        // prevent floating point nonsense from screwing up the last endpoint;
+        output[parts - 1] = new Interval(newLeft, right);
+        return output;
+
+Now the problem is that floating point nonsense can add up by the time the last interval is created, such that you get an improper interval. For the interval (0,1), this happens somewhere between a partition number of 10^4 and 10^5.
+
+Changing the for loop to 
+
+            newWidth = (right - newLeft)/(parts - i);
+            newRight = newLeft + newWidth;
+            // the following causes a floating point error:
+            // output[i] = new Interval(newLeft + (i * newWidth), newRight + (i * newWidth));
+            // whereas this works slightly better
+            output[i] = new Interval(newLeft,newRight);
+            newLeft = newRight; 
+
+should fix it, controlling the build-up of floating point errors by recalculating the subdivision width each time. Unfortunately, this kills the "evenness" implied by the name of the routine, but now Java runs out of heap space for large enough n without experiencing floating point errors partitioning (0,1) into 10^n, so we're making progress. (Somewhere between 10^6 and 10^7 is where the memory requirements become too great.)
+
+Manual inspection of the Even_Subdivision_Test log file will confirm that the errors in width between subintervals are fairly small. Unacceptable if I were aiming for complete scientificity, but I'm not. I probably learned and forgot a way to do this with much more accuracy in numerical analysis, but for now I'm calling this closed if I can't reproduce the crash in the ARTable code that started this chase.
+
+The second set of ARTables logs in this directory demonstrate that for the test cases that were causing trouble earlier, there is no longer such trouble.
+
+Closed.

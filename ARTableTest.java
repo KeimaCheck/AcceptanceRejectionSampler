@@ -13,6 +13,11 @@ import org.junit.Test;
  */
 public class ARTableTest
 {
+    private LinearTestPDF linearTe1;
+    private PolynomialTestPDF polynomi1;
+    private ARTable aRTable1;
+    private ARTable aRTable2;
+    
     /**
      * Default constructor for test class ARTableTest
      */
@@ -26,8 +31,13 @@ public class ARTableTest
      * Called before every test case method.
      */
     @Before
-    public void setUp()
+    public void setUp() throws IntervalException
     {
+        linearTe1 = new LinearTestPDF(0, 1, 4, 0);
+        float[] coefs = {1,2,3};
+        polynomi1 = new PolynomialTestPDF(coefs, -1, 1);
+        aRTable1 = new ARTable(linearTe1);
+        aRTable2 = new ARTable(polynomi1);
     }
 
     /**
@@ -43,24 +53,8 @@ public class ARTableTest
     @Test
     public void maxValueTest() throws IntervalException
     {
-        ARTable aRTable1 = new ARTable();
-        LinearTestPDF linearTe1 = new LinearTestPDF(0, 1, 1, 0);
-        assertEquals(1, linearTe1.getMax(linearTe1.getSupport(), 100), 0.1);
+        assertEquals(4, linearTe1.getMax(linearTe1.getSupport(), 100), 0.1);
         assertEquals(0, linearTe1.getMin(linearTe1.getSupport(), 100), 0.1);
-    }
-
-    @Test
-    public void ARTableLinearPDFTest() throws IntervalException
-    {
-        LinearTestPDF linearTe1 = new LinearTestPDF(0, 1, 4, 1);
-        ARTable aRTable1 = new ARTable(linearTe1);
-    }
-
-    @Test
-    public void ARTableQuadraticPDFTest() throws IntervalException
-    {
-        QuadraticTestPDF quadrati1 = new QuadraticTestPDF(-1, 1, 3, 2, 1);
-        ARTable aRTable1 = new ARTable(quadrati1);
     }
 }
 

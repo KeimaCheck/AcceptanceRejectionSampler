@@ -54,4 +54,17 @@ public class Logger
             System.out.println("Failure while logging, not sure what to do now.");
         }
     }
+    
+    public void writeEnumerated(float[] data)
+    {
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(logFile, true))))
+        {
+            for (int i = 0; i < data.length; i ++)
+            {
+                out.println(i + " | " + data[i] + "\n");
+            }
+        } catch (IOException ex) {
+            System.out.println("Failure while logging, not sure what to do now.");
+        }
+    }
 }

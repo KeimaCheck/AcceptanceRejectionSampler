@@ -38,7 +38,7 @@ public class Interval
             left = leftEndpoint;
             right = rightEndpoint;
             width = getWidth();
-        } else { throw new IntervalException("Attempted to create an improper interval"); }
+        } else { throw new IntervalException(leftEndpoint, rightEndpoint); }
     }
 
     /**
@@ -88,18 +88,22 @@ public class Interval
     
     public Interval[] subdivideEvenly(int parts) throws IntervalException
     {
-        float newWidth = width/parts;
+        float newWidth;
         Interval output[] = new Interval[parts];
         float newLeft = left;
-        float newRight = left + newWidth;
+        float newRight;
         for (int i = 0; i < parts-1; i++)
         {
-            output[i] = new Interval(newLeft + (i * newWidth), newRight + (i * newWidth));
+            newWidth = (right - newLeft)/(parts - i);
+            newRight = newLeft + newWidth;
+            // the following causes a floating point error:
+            // output[i] = new Interval(newLeft + (i * newWidth), newRight + (i * newWidth));
+            // whereas this works slightly better
+            output[i] = new Interval(newLeft,newRight);
+            newLeft = newRight; 
         }
-        int i = parts-1;
-        // guarantee that even with floating point nonsense the last interval has the correct
-        // right endpoint
-        output[i] = new Interval(newLeft + (i * newWidth), right);
+        // prevent floating point nonsense from screwing up the last endpoint;
+        output[parts - 1] = new Interval(newLeft, right);
         return output;
     }
     
