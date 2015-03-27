@@ -15,7 +15,7 @@ import java.lang.Integer;
  * @author (Nicholas Padinha) 
  * @version (0.2, 3/22/2015)
  */
-public class ARTable
+public class ARTable    // extends ProbabilityDistribution? (because the boxed envelope is "just" another distribution)
 {
     private Entry tableRoot;
     private Logger logger;
@@ -40,6 +40,10 @@ public class ARTable
     private static int LEFT_ENTRY = 0;
     private static int MIDDLE_ENTRY = 1;
     private static int RIGHT_ENTRY = 2;
+    
+    // These statics define modes for looking up intervals by a contained value
+    private static int PROBABILITY_MODE = -274;
+    private static int SAMPLING_MODE = -275;
 
 
     /**
@@ -204,6 +208,33 @@ public class ARTable
         return tableRoot.printRecursive();
     }
     
+    public float probabilityDensity(float x)
+    {
+        // find the interval x belongs to, return thatInterval.box;
+        // obvious placeholder
+        return 0;
+    }
+    
+    public float sample()
+    {
+        // draw a uniform float, (0,1)
+        float uniformRandom = 0; // note that, once again, this is an obvious placeholder so that I could do a quick sanity-compile
+
+        // find the entry whose probabilityInterval contains that float,
+        // get its axisInterval
+        Interval sampleFromWithin = tableRoot.findBelow(uniformRandom,PROBABILITY_MODE).axisInterval;
+        
+        // redraw uniformRandom and affinely transform it into a uniform float between
+        // sampleFromWithin.left and sampleFromWithin.right
+        float scale = sampleFromWithin.getWidth();
+        float translate = sampleFromWithin.getLeft();
+        // refresh uniformRandom
+        uniformRandom *= scale;
+        uniformRandom += translate;
+        
+        return uniformRandom;
+    }
+    
     /**
      * Objects of class Entry are the main data elements of ARTale objects.
      * They consist of two Intervals and a float, as well as references to right and left child
@@ -293,6 +324,30 @@ public class ARTable
             } else { output = this; } // 
             
             return output;
+        }
+        
+        /**
+         * Search below this entry for an entry whose axisInterval contains a given value.
+         * Essentially the default behavior for the next overload of this function, which
+         * lets the caller determine whether they want to find a probability interval or
+         * an axis interval
+         * 
+         * @param x   the value to find
+         * @return    the entry containing that value
+         */
+        public Entry findBelow(float findNumber) throws IntervalException, IntervalTreeException
+        {
+            // obvious placeholder
+            return null;
+        }
+        
+        /**
+         * Write a docstring, chump
+         */
+        public Entry findBelow(float findNumber, int mode)
+        {
+            // obvious placeholder
+            return null;
         }
         
         /**
@@ -501,7 +556,7 @@ public class ARTable
          * Implements the recursive logic of computing the probability intervals used for sampling.
          * 
          */
-        public computeProbabilityIntervals()
+        public float computeProbabilityIntervals()
         {
             // be supplied with the rightmost endpoint that the calling tree knows about
             // set that as the leftmost endpoint of the left subtree and proceed
@@ -515,6 +570,9 @@ public class ARTable
             
             // return the rightmost endpoint of the probability intervals under this entry,
             // so that the next higher layer of recursion can use that as the left endpoint
+            
+            // obvious placeholder
+            return 0;
         }
         
         /**
