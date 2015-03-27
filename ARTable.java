@@ -9,6 +9,7 @@ import java.lang.Integer;
  * 
  * Limitations: (1) The density function must have finite support. (2) The density 
  * function should be monotonic on each interval in some finite partition of its suport
+ * for optimal performance.
  * 
  * 
  * @author (Nicholas Padinha) 
@@ -65,6 +66,14 @@ public class ARTable
         computeLookupTable();
         logger.writeMessage("Here is the table in sequential order:\n");
         logger.writeMessage(printInOrder());
+        // next we need to compute the data used for sampling the boxed distribution
+        // first traverse the tree, computing for each interval the area of the box there (max * width)
+        // sum the computed areas while traversing and keep track of the total number of partitions
+        // traverse the tree again, computing A_i = (Area of ith box)/(Total area under BE graph)
+        // and setting P_0,left = 0
+        //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
+        //             P_i+1,left = P_i,right for i in (0,n-1)
+        //             P_n,right = 1
     }
 
   

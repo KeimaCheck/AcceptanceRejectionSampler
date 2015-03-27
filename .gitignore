@@ -17,6 +17,8 @@ $RECYCLE.BIN/
 
 # logs
 logs/**
+*.log
+!closed-bugs/**/*.logs
 
 # Windows Installer files
 *.cab
