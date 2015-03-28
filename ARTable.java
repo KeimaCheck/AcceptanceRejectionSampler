@@ -18,19 +18,18 @@ import java.util.Random;
  */
 public class ARTable    // extends ProbabilityDistribution? (because the boxed envelope is "just" another distribution)
 {
+    // the core state variables. All are assigned by the time the constructor exits
     private Entry tableRoot;
     private Logger logger;
     private ProbabilityDistribution distribution;
     private Random rng;
+    private int numberOfBoxes;
+    private float totalBoxArea;
     
     // These fields used when saving or loading a previously-computed table
     private Interval[] loadAxisIntervals;
     private Interval[] loadProbabilityIntervals;
     private float[] loadBoxes;
-    
-    // These fields store data used in sampling the distribution
-    private int numberOfBoxes;
-    private float totalBoxArea;
     
     // These statics control the running and stopping behavior of the algorithm
     private static int TEST_POINTS = 100;
@@ -266,6 +265,16 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         // uniformRandom now contains a number effectively drawn at random from the distribution
         // represented by this table
         return uniformRandom;
+    }
+    
+    /**
+     * Traverse the tree, storing the data in the tree in a 3x(# of nodes) matrix.
+     * 
+     * Like all traversals, most of the logic is handled recursively in the inner class Entry
+     */
+    public void literalTable()
+    {
+        tableRoot.literalTableRecurse(0);
     }
     
     /**
@@ -655,6 +664,30 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             // return the rightmost endpoint of the probability intervals under this entry,
             // so that the next higher layer of recursion can use that as the left endpoint
             return rightEdge;
+        }
+        
+        /**
+         * Handles the recursive logic of converting the tree to a tabular format
+         * 
+         * @param index   The table index where the first Entry found under this one should store its data
+         * @return   The table index where the first Entry found by the caller after returning from this call
+         *           should store its data
+         */
+        public int literalTableRecurse(int index)
+        {
+            if (leftChild != null)
+            {
+                // do the leftChild stuff
+            }
+            
+            // do the stuff to ourselves
+            
+            if (rightChild != null)
+            {
+                // do the rightChild stuff
+            }
+            
+            // return the appropriate stuff
         }
         
         /**

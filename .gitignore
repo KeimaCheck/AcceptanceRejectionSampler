@@ -20,6 +20,9 @@ logs/**
 *.log
 !closed-bugs/**/*.logs
 
+# docs
+doc/**
+
 # Windows Installer files
 *.cab
 *.msi
