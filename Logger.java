@@ -15,6 +15,7 @@ import java.io.IOException;
  * Will I? Probably not.
  * 
  * Quick, dirty, gets the job done.
+ * Revised note: this is actually terrible, opening the file every time we need to log a thing
  * 
  * @author (Nicholas Padinha) 
  * @version (3/22/2015)

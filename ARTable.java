@@ -243,14 +243,14 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      */
     public float sample() throws IntervalException, IntervalTreeException
     {
-        logger.writeMessage("Sampling from boxed envelope distribution...");
+        // logger.writeMessage("Sampling from boxed envelope distribution...");
         float uniformRandom = rng.nextFloat();
 
         // find the entry whose probabilityInterval contains that float,
         // get its axisInterval
-        logger.writeMessage("Selecting box...\n");
+        // logger.writeMessage("Selecting box...\n");
         Interval sampleFromWithin = tableRoot.findBelow(uniformRandom,PROBABILITY_MODE).axisInterval;
-        logger.writeMessage("Box at " + sampleFromWithin.print() + " selected.\n");
+        // logger.writeMessage("Box at " + sampleFromWithin.print() + " selected.\n");
         
         float scale = sampleFromWithin.getWidth();
         float translate = sampleFromWithin.getLeft();
@@ -392,7 +392,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             {
                 if (leftChild!= null)
                 { 
-                    logger.writeMessage("Looking to the left of " + searchInterval.print() + " for " + findNumber + "\n");
+                    // logger.writeMessage("Looking to the left of " + searchInterval.print() + " for " + findNumber + "\n");
                     output = leftChild.findBelow(findNumber, mode); 
                 }
                 else {throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
@@ -400,14 +400,14 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             {
                 if (rightChild != null)
                 {
-                    logger.writeMessage("Looking to the right of " + searchInterval.print() + " for " + findNumber + "\n");
+                    // logger.writeMessage("Looking to the right of " + searchInterval.print() + " for " + findNumber + "\n");
                     output = rightChild.findBelow(findNumber, mode); 
                 }
                 else { throw new IntervalTreeException(findNumber + " is not in any interval in the tree"); }
             } else
             {
-                assert searchInterval.contains(findNumber);
-                logger.writeMessage(searchInterval + " contains " + findNumber + "\n");
+                // assert searchInterval.contains(findNumber);
+                // logger.writeMessage(searchInterval.print() + " contains " + findNumber + "\n");
                 output = this;
             }
             

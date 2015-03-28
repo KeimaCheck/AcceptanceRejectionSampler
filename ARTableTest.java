@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.Arrays;
 
 /**
  * The test class ARTableTest.
@@ -70,7 +71,7 @@ public class ARTableTest
         Logger log = new Logger("ART-Density-Test");
         
         ARTable aRTable1 = new ARTable(polynomi1);
-        int iterations = 1000;
+        int iterations = 100;
         float x[] = new float[iterations];
         float errors[] = new float[iterations];
         float diff;
@@ -110,6 +111,35 @@ public class ARTableTest
         assert errorTotal == 0;
         
     }
+    
+    @Test
+    public void sampleSpeedTest() throws IntervalException, IntervalTreeException
+    {
+        Logger log = new Logger("BESampling-Speed-Test");
+        
+        int iterations = 100000;
+        ARTable aRTable1 = new ARTable(polynomi1);
+        float xs[] = new float[iterations];
+        
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < iterations; i++)
+        {
+            xs[i] = aRTable1.sample();
+        }
+        long endTime = System.currentTimeMillis();
+        
+        float stoppingTime = endTime - startTime;
+        float averageTime = stoppingTime/iterations;
+        log.writeMessage("Total time: " + stoppingTime + "ms\n");
+        log.writeMessage("Average time: " + averageTime + "ms\n");
+        log.writeMessage("Index | Sample\n");
+        log.writeEnumerated(xs);
+        
+        Arrays.sort(xs);
+        
+    }
+    
+    
 }
 
 
