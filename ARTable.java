@@ -258,6 +258,10 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             System.out.println("Failed to scan text lookup table--formatting?");
         }
         
+        tabularized = true;
+        tableRoot = new Entry();
+        tableRoot.treeify(0,numberOfBoxes - 1);
+        
     }
     
     /**
@@ -358,14 +362,6 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     }
     
     /**
-     * 
-     */
-    public void treeifyTable()
-    {
-        
-    }
-    
-    /**
      * Objects of class Entry are the main data elements of ARTale objects.
      * They consist of two Intervals and a float, as well as references to right and left child
      * Entries. Letting $f$ refer to the density function of the distribution in question,
@@ -390,6 +386,15 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         public float box;
         
         public float boxArea;
+        
+        public Entry()
+        {
+            leftChild = null;
+            rightChild = null;
+            axisInterval = null;
+            probabilityInterval = null;
+            // box uninitialized;
+        }
         
         /**
          * Constructor for objects of type Entry
@@ -781,6 +786,34 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             }
             
             return indexTemp;
+        }
+        
+        /**
+         * Converts the tabular data into a binary tree recursively
+         * 
+         * @param rangeLeft     The left index of the sub-arrays to store under this entry
+         * @param rangeRight    The right index of the sub-arrays to store under this entry
+         */
+        public void treeify(int rangeLeft, int rangeRight)
+        {
+            assert tabularized : "Must tabularize before treeifying.";
+            int middle = (rangeRight + rangeLeft)/2;
+            box = loadBoxes[middle];
+            axisInterval = loadAxisIntervals[middle];
+            probabilityInterval = loadProbabilityIntervals[middle];
+            boxArea = box * axisInterval.getWidth();
+
+            // there's something rotten in how this recursion is done, but I just wanted to write *something*, y'know?
+            if (rangeLeft != middle) 
+            {
+                leftChild = new Entry();
+                leftChild.treeify(rangeLeft, middle);
+            } else { leftChild = null; }
+            if (rangeRight != middle)
+            {
+                rightChild = new Entry();
+                rightChild.treeify(middle, rangeRight);
+            } else { rightChild = null; }
         }
         
         /**
