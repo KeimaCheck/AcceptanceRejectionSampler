@@ -90,7 +90,10 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         // next we need to compute the data used for sampling the boxed distribution
         // first traverse the tree, computing for each interval the area of the box there (max * width)
         // sum the computed areas while traversing and keep track of the total number of partitions
-        computeAreas();
+        computeAreas();     // numberOfBoxes, totalBoxArea, now set
+        loadAxisIntervals = new Interval[numberOfBoxes];
+        loadProbabilityIntervals = new Interval[numberOfBoxes];
+        loadBoxes = new float[numberOfBoxes];
         // traverse the tree again, computing A_i = (Area of ith box)/(Total area under BE graph)
         // and setting P_0,left = 0
         //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
@@ -226,17 +229,17 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         if (!tabularized) { literalTable(); }
         
         try(PrintWriter out = new PrintWriter(new BufferedWriter(
-            new FileWriter(filename, true))))
+            new FileWriter(filename))))
         {
             // header format: numberOfBoxes totalBoxArea
-            out.println(numberOfBoxes + " " + totalBoxArea + "\n");
+            out.println(numberOfBoxes + " " + totalBoxArea);
             for (int i = 0; i < numberOfBoxes; i++)
             {
                 // entry format: aILeft aIRight pILeft pIRight box
                 out.println(loadAxisIntervals[i].getLeft() + " " + loadAxisIntervals[i].getRight() + " "
                             + loadProbabilityIntervals[i].getLeft() + " "
                             + loadProbabilityIntervals[i].getRight() + " "
-                            + loadBoxes[i] + "\n");
+                            + loadBoxes[i]);
             }
         } catch (IOException ex)
         {
@@ -261,10 +264,10 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      */
     public float probabilityDensity(float x) throws IntervalException, IntervalTreeException
     {
-        logger.writeMessage("Finding box height at " + x + "\n");
+        // logger.writeMessage("Finding box height at " + x + "\n");
         Entry containingBox = tableRoot.findBelow(x, SAMPLING_MODE);
-        logger.writeMessage(x + " is in " + containingBox.axisInterval
-                            + ", with box height" + containingBox.box + "\n");
+        // logger.writeMessage(x + " is in " + containingBox.axisInterval
+        //                    + ", with box height" + containingBox.box + "\n");
         return containingBox.box;
     }
     
@@ -715,10 +718,14 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
                 indexTemp = leftChild.literalTableRecurse(indexTemp);
             }
             
-            loadAxisIntervals[indexTemp] = axisInterval;
-            loadProbabilityIntervals[indexTemp] = probabilityInterval;
-            loadBoxes[indexTemp] = box;
-            index++;
+            logger.writeMessage("Putting data from entry " + indexTemp + "\n");
+            try
+            {
+                loadAxisIntervals[indexTemp] = axisInterval;
+                loadProbabilityIntervals[indexTemp] = probabilityInterval;
+                loadBoxes[indexTemp] = box;
+            } catch (NullPointerException ex) { logger.writeMessage("Null pointer exception encountered here"); }
+            indexTemp++;
             
             if (rightChild != null)
             {
