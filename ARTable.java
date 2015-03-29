@@ -2,6 +2,11 @@ import java.util.Hashtable;
 import java.lang.Float;
 import java.lang.Integer;
 import java.util.Random;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.Scanner;
 /**
  * Implements generating and sampling from a boxed envelope function for use in
  * acceptance-rejection PRNG. The primary data structure is that of a binary search
@@ -25,6 +30,10 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     private Random rng;
     private int numberOfBoxes;
     private float totalBoxArea;
+    
+    // situational state variables
+    private boolean loaded;
+    private boolean tabularized;
     
     // These fields used when saving or loading a previously-computed table
     private Interval[] loadAxisIntervals;
@@ -66,6 +75,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      */
     public ARTable(ProbabilityDistribution newDistribution) throws IntervalException
     {
+        loaded = false;
+        tabularized = false;
         rng = new Random(System.currentTimeMillis());
         distribution = newDistribution;
         // check if the distribution has a lookup table already computed and load it
@@ -207,8 +218,28 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      * 
      * @param filename   the name of the file to save to
      */
-    private void saveLookupTable(String filename)
+    private void saveLookupTable()
     {
+        String filename = distribution.getName() + ".bef";
+        if (!tabularized) { literalTable(); }
+        
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(
+            new FileWriter(filename, true))))
+        {
+            // header format: numberOfBoxes totalBoxArea
+            out.println(numberOfBoxes + " " + totalBoxArea + "\n");
+            for (int i = 0; i < numberOfBoxes; i++)
+            {
+                // entry format: aILeft aIRight pILeft pIRight box
+                out.println(loadAxisIntervals[i].getLeft() + " " + loadAxisIntervals[i].getRight() + " "
+                            + loadProbabilityIntervals[i].getLeft() + " "
+                            + loadProbabilityIntervals[i].getRight() + " "
+                            + loadBoxes[i] + "\n");
+            }
+        } catch (IOException ex)
+        {
+          System.out.println("IO failure while writing contents of table to disk");  
+        } 
         
     }
     
@@ -274,8 +305,12 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      */
     public void literalTable()
     {
-        tableRoot.literalTableRecurse(0);
+        int sanity = tableRoot.literalTableRecurse(0);
+        assert sanity == numberOfBoxes;
+        tabularized = true;
     }
+    
+    
     
     /**
      * Objects of class Entry are the main data elements of ARTale objects.
@@ -675,19 +710,24 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
          */
         public int literalTableRecurse(int index)
         {
+            int indexTemp = index;
+            
             if (leftChild != null)
             {
-                // do the leftChild stuff
+                indexTemp = leftChild.literalTableRecurse(indexTemp);
             }
             
-            // do the stuff to ourselves
+            loadAxisIntervals[indexTemp] = axisInterval;
+            loadProbabilityIntervals[indexTemp] = probabilityInterval;
+            loadBoxes[indexTemp] = box;
+            index++;
             
             if (rightChild != null)
             {
-                // do the rightChild stuff
+                indexTemp = rightChild.literalTableRecurse(indexTemp);
             }
             
-            // return the appropriate stuff
+            return indexTemp;
         }
         
         /**
