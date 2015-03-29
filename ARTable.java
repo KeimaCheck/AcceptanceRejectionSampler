@@ -6,7 +6,11 @@ import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.util.InputMismatchException;
 /**
  * Implements generating and sampling from a boxed envelope function for use in
  * acceptance-rejection PRNG. The primary data structure is that of a binary search
@@ -213,8 +217,46 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      * 
      * @param filename   the name of the file to load from
      */
-    private void loadLookupTable(String filename)
+    private void loadLookupTable() throws FileNotFoundException
     {
+        String filename = distribution.getName() + ".bef";
+        Scanner scanHead;
+        Scanner scanBody;
+        try(BufferedReader input = new BufferedReader(new FileReader(filename)))
+        {
+            scanHead = new Scanner(input.readLine());
+            float aILeft;
+            float aIRight;
+            float pILeft;
+            float pIRight;
+            float boxx;
+            numberOfBoxes = scanHead.nextInt();
+            totalBoxArea = scanHead.nextFloat();
+            loadAxisIntervals = new Interval[numberOfBoxes];
+            loadProbabilityIntervals = new Interval[numberOfBoxes];
+            loadBoxes = new float[numberOfBoxes];
+            for (int i = 0; i < numberOfBoxes; i++)
+            {
+                scanBody = new Scanner(input.readLine());
+                aILeft = scanBody.nextFloat();
+                aIRight = scanBody.nextFloat();
+                pILeft = scanBody.nextFloat();
+                pIRight = scanBody.nextFloat();
+                boxx = scanBody.nextFloat();
+                loadBoxes[i] = boxx;
+                loadProbabilityIntervals[i] = new Interval(pILeft, pIRight);
+                loadAxisIntervals[i] = new Interval(aILeft, aIRight);
+            }
+        } catch (IOException ex) 
+        {
+            System.out.println("Failed to read lookup table from disk");
+        } catch (IntervalException ex)
+        {
+            System.out.println(ex.getMessage());
+        } catch (InputMismatchException ex)
+        {
+            System.out.println("Failed to scan text lookup table--formatting?");
+        }
         
     }
     
@@ -315,7 +357,13 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         tabularized = true;
     }
     
-    
+    /**
+     * 
+     */
+    public void treeifyTable()
+    {
+        
+    }
     
     /**
      * Objects of class Entry are the main data elements of ARTale objects.
