@@ -71,7 +71,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     /**
      * Constructor for objects of class ARTable
      * 
-     * Loads or computes a lookup table for a given distribution depending on its internal state
+     * Loads or computes a lookup table for a given distribution
      */
     public ARTable(ProbabilityDistribution newDistribution) throws IntervalException
     {
@@ -97,6 +97,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         //             P_i+1,left = P_i,right for i in (0,n-1)
         //             P_n,right = 1
         computeProbabilityIntervals();
+        loaded = true;
+        saveLookupTable();
     }
 
   
@@ -489,8 +491,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
          */
         public void prepend(Entry head) throws IntervalException
         {
-            logger.writeMessage("Prepending tree under " + head.print() + " to tree under "
-                                + print() + ".\n");
+            //logger.writeMessage("Prepending tree under " + head.print() + " to tree under "
+            //                    + print() + ".\n");
             Entry leastEntryOfThis = leftmost();
             Entry greatestEntryOfHead = head.rightmost();
             
@@ -508,7 +510,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
 
             assert (check == -1): errorMessage;
             leastEntryOfThis.leftChild = head;
-            logger.writeMessage("Successful.\n");
+            //logger.writeMessage("Successful.\n");
         }
         
         
@@ -520,8 +522,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
          */
         public void postpend(Entry tail) throws IntervalException
         {
-            logger.writeMessage("Postpending tree under " + tail.print() + " to tree under "
-                                + print() + ".\n");
+            //logger.writeMessage("Postpending tree under " + tail.print() + " to tree under "
+            //                    + print() + ".\n");
             Entry greatestEntryOfThis = rightmost();
             Entry leastEntryOfTail = tail.leftmost();
             
@@ -539,7 +541,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             
             assert (check == 1): errorMessage;
             greatestEntryOfThis.rightChild = tail;
-            logger.writeMessage("Successful.\n");
+            //logger.writeMessage("Successful.\n");
         }
         
         /**
@@ -560,11 +562,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
          */
         public Entry subdivide(float minGuess) throws IntervalException
         {
-            // there's an annoying bug in here somewhere--some kind of floating point error
-            // as of 3/24/15, it seems like the bug has to do with interval subdivision,
-            // based on error messages returned by the Entry.prepend/postpend methods.
-            
-            logger.writeMessage("Subdividing " + print() + "\n");
+            //logger.writeMessage("Subdividing " + print() + "\n");
             float trapezoidToBoxRatio = (1.0f + (minGuess / box)) / 2.0f;
             float currentWidth = axisInterval.getWidth();
             
@@ -578,17 +576,17 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             // close to zero anywhere, the stopping criterion implemented here is going to
             // let recursion go on until you get below the width threshold
             {
-                logger.writeMessage("Trap-to-box ratio: " + trapezoidToBoxRatio + " > " + RATIO_THRESH + "\n");
-                logger.writeMessage("Therefore, I will stop subdividing and return this Entry\n");
+                //logger.writeMessage("Trap-to-box ratio: " + trapezoidToBoxRatio + " > " + RATIO_THRESH + "\n");
+                //logger.writeMessage("Therefore, I will stop subdividing and return this Entry\n");
                 output = this;
             }
             // otherwise we enter the adaptive part of the routine
             else
             {
-                logger.writeMessage("Entry failed first stopping test.\n");
-                logger.writeMessage("(Trap-to-box ratio: " + trapezoidToBoxRatio + ". Width: "
-                                    + currentWidth + ")\n");
-                logger.writeMessage("vs (" + RATIO_THRESH + ", " + WIDTH_THRESH + ")\n");
+                //logger.writeMessage("Entry failed first stopping test.\n");
+                //logger.writeMessage("(Trap-to-box ratio: " + trapezoidToBoxRatio + ". Width: "
+                //                    + currentWidth + ")\n");
+                //logger.writeMessage("vs (" + RATIO_THRESH + ", " + WIDTH_THRESH + ")\n");
                 // get three even parts of the current interval and the relevant data
                 Interval newIntervals[] = axisInterval.subdivideEvenly(SUBDIVISIONS);
                 Entry subEntries[] = new Entry[SUBDIVISIONS];
@@ -607,8 +605,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
                     if (maxs[i] != box)
                     { 
                         doDivide = true;
-                        logger.writeMessage("Entry's " + i + "th part exhibits max value " + maxs[i] + "\n");
-                        logger.writeMessage("Therefore I will recursively act on all three parts.\n");
+                        //logger.writeMessage("Entry's " + i + "th part exhibits max value " + maxs[i] + "\n");
+                        //logger.writeMessage("Therefore I will recursively act on all three parts.\n");
                     }
                 }
                 
@@ -616,23 +614,23 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
                 if (!doDivide)
                 {
                     output = this;
-                    logger.writeMessage("Entry passed second stopping test " +
-                                        "(max value preserved by subdivisions)\n");
-                    logger.writeMessage("Therefore I will stop recursing this branch and return the Entry.\n");
+                    //logger.writeMessage("Entry passed second stopping test " +
+                    //                    "(max value preserved by subdivisions)\n");
+                    //logger.writeMessage("Therefore I will stop recursing this branch and return the Entry.\n");
                 }
                 else
                 {
                     Entry returnedRoot = subEntries[MIDDLE_ENTRY];
                     output = returnedRoot.subdivide(mins[MIDDLE_ENTRY]);
-                    logger.writeMessage("Finished recursing on middle part of " + print() +"\n");
+                    //logger.writeMessage("Finished recursing on middle part of " + print() +"\n");
                     
                     Entry returnedLeftChild = subEntries[LEFT_ENTRY];
                     output.prepend(returnedLeftChild.subdivide(mins[LEFT_ENTRY]));
-                    logger.writeMessage("Finished recursing on left part of " + print() + "\n");
+                    //logger.writeMessage("Finished recursing on left part of " + print() + "\n");
                     
                     Entry returnedRightChild = subEntries[RIGHT_ENTRY];
                     output.postpend(returnedRightChild.subdivide(mins[RIGHT_ENTRY]));
-                    logger.writeMessage("Finished recursing on right part of " + print() + "\n");
+                    //logger.writeMessage("Finished recursing on right part of " + print() + "\n");
                 }
             }
             
@@ -652,8 +650,8 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             boxArea = axisInterval.getWidth() * box;
             totalBoxArea += boxArea;
             
-            logger.writeMessage("Box at " + axisInterval.print() + " has area " + boxArea + "\n");
-            logger.writeMessage("Found total area " + totalBoxArea + " so far.\n"); 
+            // logger.writeMessage("Box at " + axisInterval.print() + " has area " + boxArea + "\n");
+            // logger.writeMessage("Found total area " + totalBoxArea + " so far.\n"); 
             
             // account for this entry's interval in the count
             int subtreeTotalIntervals = 1;
@@ -694,7 +692,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
                 rightEdge = rightChild.computeProbabilityIntervals(rightEndpoint);
             } else { rightEdge = rightEndpoint; }
             
-            logger.writeMessage("axisInterval: " + axisInterval.print() + ", probabilityInterval: " + probabilityInterval.print());
+            //logger.writeMessage("axisInterval: " + axisInterval.print() + ", probabilityInterval: " + probabilityInterval.print());
             
             // return the rightmost endpoint of the probability intervals under this entry,
             // so that the next higher layer of recursion can use that as the left endpoint
