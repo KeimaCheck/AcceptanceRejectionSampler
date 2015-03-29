@@ -155,62 +155,6 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         
     }
     
-    /**
-     * Get (hopefully a good approximation to) the max value of a distribution on an interval
-     * Deprecated as of 0.2, reason: poor OO design choice putting this function here in the first place
-     * 
-     * @param distribution   the distribution
-     * @param interval   the interval
-     * @returns   the max value of the distribution over the interval
-     */
-    @Deprecated
-    public float getMax(HasPDF distribution, Interval interval)
-    {
-        float domainWidth = interval.getWidth();
-        float evalPoint = interval.getLeft();
-        float subparcel = domainWidth / TEST_POINTS;
-        float max = distribution.probabilityDensity(evalPoint);
-        float a;
-        
-        // Check some (reasonably) large number of evenly spaced points throughout the interval
-        // and return the max value obtained on those points
-        for (int i = 0; i < TEST_POINTS; i++)
-        {
-            evalPoint += subparcel;
-            a = distribution.probabilityDensity(evalPoint);
-            if (max < a) { max = a; }
-        }
-        return max;
-    }
-    
-    
-    /**
-     * Basically identical to getMax, only gets the minimum instead
-     * Deprecated as of 0.2, reason: see ARTable.getMax()
-     * 
-     * @param distribution   the distribution
-     * @param interval   the interval
-     * @return   the min value of the density function of the distribution over the interval
-     */
-    @Deprecated
-    public float getMin(HasPDF distribution, Interval interval)
-    {
-        float domainWidth = interval.getWidth();
-        float evalPoint = interval.getLeft();
-        float subparcel = domainWidth / TEST_POINTS;
-        float min = distribution.probabilityDensity(evalPoint);
-        float a;
-        
-        // See comment in getMax()
-        for (int i = 0; i < TEST_POINTS; i++)
-        {
-            // next line causes a lack of precision for the same reason that subdivide was all screwy
-            evalPoint += subparcel;
-            a = distribution.probabilityDensity(evalPoint);
-            if (min > a) { min = a; }
-        }
-        return min;
-    }
     
     /**
      * Load the lookup table from a file when possible
