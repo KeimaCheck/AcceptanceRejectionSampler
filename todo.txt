@@ -1,0 +1,7 @@
+verify the behavior of box-envelope distributions
+
+rewrite methods involving tree traversal to a single method making use of special function objects
+
+rewrite ARTable-Entry complex as a decorator pattern
+--Entry becomes a standalone class
+--The public features exposed in the top-level of ARTable are moved to a decorator applied to the root of the interval tree

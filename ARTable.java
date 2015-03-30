@@ -33,16 +33,16 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
     private ProbabilityDistribution distribution;
     private Random rng;
     private int numberOfBoxes;
-    private float totalBoxArea;
+    protected float totalBoxArea;
     
     // situational state variables
     private boolean loaded;
     private boolean tabularized;
     
     // These fields used when saving or loading a previously-computed table
-    private Interval[] loadAxisIntervals;
+    protected Interval[] loadAxisIntervals;
     private Interval[] loadProbabilityIntervals;
-    private float[] loadBoxes;
+    protected float[] loadBoxes;
     
     // These statics control the running and stopping behavior of the algorithm
     private static int TEST_POINTS = 100;
@@ -83,29 +83,35 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         tabularized = false;
         rng = new Random(System.currentTimeMillis());
         distribution = newDistribution;
-        // check if the distribution has a lookup table already computed and load it
-        // if (FILE EXISTS: distribution.getName()) { LOAD TABLE FROM FILE }
-        // else
         logger = new Logger("ARTable");
         logger.writeMessage("Initialized ARTable for distribution " + distribution.getName() + "\n");
-        computeLookupTable();
-        logger.writeMessage("Here is the table in sequential order:\n");
-        logger.writeMessage(printInOrder());
-        // next we need to compute the data used for sampling the boxed distribution
-        // first traverse the tree, computing for each interval the area of the box there (max * width)
-        // sum the computed areas while traversing and keep track of the total number of partitions
-        computeAreas();     // numberOfBoxes, totalBoxArea, now set
-        loadAxisIntervals = new Interval[numberOfBoxes];
-        loadProbabilityIntervals = new Interval[numberOfBoxes];
-        loadBoxes = new float[numberOfBoxes];
-        // traverse the tree again, computing A_i = (Area of ith box)/(Total area under BE graph)
-        // and setting P_0,left = 0
-        //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
-        //             P_i+1,left = P_i,right for i in (0,n-1)
-        //             P_n,right = 1
-        computeProbabilityIntervals();
-        loaded = true;
-        saveLookupTable();
+        try
+        {
+            loadLookupTable();
+            logger.writeMessage("Here is the table in sequential order:\n");
+            logger.writeMessage(printInOrder());
+        } catch (FileNotFoundException ex)
+        {
+            logger.writeMessage("Envelope for distribution " + distribution.getName() + " not yet computed. Doing it.\n");
+            computeLookupTable();
+            logger.writeMessage("Here is the table in sequential order:\n");
+            logger.writeMessage(printInOrder());
+            // next we need to compute the data used for sampling the boxed distribution
+            // first traverse the tree, computing for each interval the area of the box there (max * width)
+            // sum the computed areas while traversing and keep track of the total number of partitions
+            computeAreas();     // numberOfBoxes, totalBoxArea, now set
+            loadAxisIntervals = new Interval[numberOfBoxes];
+            loadProbabilityIntervals = new Interval[numberOfBoxes];
+            loadBoxes = new float[numberOfBoxes];
+            // traverse the tree again, computing A_i = (Area of ith box)/(Total area under BE graph)
+            // and setting P_0,left = 0
+            //             P_i,right = P_i,left + A_i  for i in (0, n-1) where n is the numer of partitions
+            //             P_i+1,left = P_i,right for i in (0,n-1)
+            //             P_n,right = 1
+            computeProbabilityIntervals();
+            loaded = true;
+            saveLookupTable();
+        }
     }
 
   
@@ -205,7 +211,6 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
         tabularized = true;
         tableRoot = new Entry();
         tableRoot.treeify(0,numberOfBoxes - 1);
-        
     }
     
     /**
@@ -747,16 +752,16 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             probabilityInterval = loadProbabilityIntervals[middle];
             boxArea = box * axisInterval.getWidth();
 
-            // there's something rotten in how this recursion is done, but I just wanted to write *something*, y'know?
-            if (rangeLeft != middle) 
+            // If there's a left/right sublist, set the left/right subtree to its treeification
+            if (rangeLeft <= middle - 1) 
             {
                 leftChild = new Entry();
-                leftChild.treeify(rangeLeft, middle);
+                leftChild.treeify(rangeLeft, middle - 1);
             } else { leftChild = null; }
-            if (rangeRight != middle)
+            if (rangeRight >= middle + 1)
             {
                 rightChild = new Entry();
-                rightChild.treeify(middle, rangeRight);
+                rightChild.treeify(middle + 1, rangeRight);
             } else { rightChild = null; }
         }
         

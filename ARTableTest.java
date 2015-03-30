@@ -139,7 +139,65 @@ public class ARTableTest
         
     }
     
-    
+    @Test
+    public void verifySamples() throws IntervalException, IntervalTreeException
+    {
+        Logger log = new Logger("BESample-Verification");
+        float next;
+        int countLocal = 0;
+        int dumbIndex = 0;    // okay.
+        float sampleRatio;
+        float areaRatio;
+        float otherAreaRatio; // okay.
+        
+        int iterations = 100000;
+        VerifyARTable verifyA1 = new VerifyARTable(polynomi1);
+        float samples[] = new float[iterations];
+        
+        Interval intervals[] = verifyA1.getIntervals();
+        float heights[] = verifyA1.getHeights();
+        float totalArea = verifyA1.getTotalArea();
+        
+        for (int i = 0; i < iterations; i++)
+        {
+            samples[i] = verifyA1.sample();
+        }
+
+        Arrays.sort(samples);
+
+        float diffs[] = new float[iterations - 1];
+        for (int i = 0; i < iterations - 1; i++)
+        {
+            diffs[i] = samples[i+1] - samples[i];
+        }
+        
+        float area;
+        
+        int lastFirst = 0;    // okay.
+        
+        for (int i = 0; i < iterations; i++)
+        {
+            if ( intervals[dumbIndex].contains(samples[i]) )
+            {
+                countLocal++;
+            }
+            else 
+            {
+                
+                sampleRatio = (float)countLocal / (float)iterations;
+                area = intervals[dumbIndex].getWidth() * heights[dumbIndex];
+                areaRatio = area / totalArea;
+                log.writeMessage(sampleRatio + " vs " + areaRatio + "\n");
+                otherAreaRatio = area / countLocal;
+                log.writeMessage(otherAreaRatio + "\n");
+                log.writeEnumerated(Arrays.copyOfRange(diffs, lastFirst, i - 1));
+                dumbIndex++;
+                lastFirst = i + 1;
+                countLocal = 0;
+            }
+            
+        }
+    }
 }
 
 
