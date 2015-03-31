@@ -1,6 +1,7 @@
-package arsmp;
-
-
+package arsmp.tests;
+import arsmp.Interval;
+import arsmp.IntervalException;
+import arsmp.Logger;
 
 import static org.junit.Assert.*;
 import org.junit.After;

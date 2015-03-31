@@ -1,5 +1,8 @@
-package arsmp;
+package arsmp.tests;
 import arsmp.distributions.ProbabilityDistribution;
+import arsmp.ARTable;
+import arsmp.IntervalException;
+import arsmp.Interval;
 
 /**
  * Wraps ARTable with getter methods for statistical

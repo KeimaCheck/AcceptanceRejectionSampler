@@ -1,5 +1,10 @@
-package arsmp;
+package arsmp.tests;
 import arsmp.distributions.*;
+import arsmp.IntervalException;
+import arsmp.Interval;
+import arsmp.IntervalTreeException;
+import arsmp.Logger;
+import arsmp.ARTable;
 
 
 import static org.junit.Assert.*;

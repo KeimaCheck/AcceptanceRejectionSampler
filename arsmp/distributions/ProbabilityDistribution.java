@@ -36,7 +36,7 @@ public abstract class ProbabilityDistribution
      * In order to save and reload precomputed boxed envelopes, it's
      * necessary that every distribution create a unique name from its paramters
      */
-    abstract String createName();
+    public abstract String createName();
     
     /**
      * Getter method for the support of this distribution
