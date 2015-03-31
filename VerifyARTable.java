@@ -1,4 +1,3 @@
-package test_suite;
 
 /**
  * Wraps ARTable with getter methods for statistical
