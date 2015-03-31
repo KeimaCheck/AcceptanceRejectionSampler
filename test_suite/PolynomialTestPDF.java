@@ -1,3 +1,5 @@
+package test_suite;
+
 import java.lang.Math;
 /**
  * Write a description of class PolynomialTestPDF here.

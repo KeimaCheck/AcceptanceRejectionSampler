@@ -1,3 +1,4 @@
+package test_suite;
 
 /**
  * Simple finitely-supported PDF for testing the ARTable class
