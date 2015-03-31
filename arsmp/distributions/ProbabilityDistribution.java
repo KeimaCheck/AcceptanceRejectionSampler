@@ -12,17 +12,17 @@ public abstract class ProbabilityDistribution
     protected String name;
     protected Interval support;
     
-    public ProbabilityDistribution() throws IntervalException
-    {
-        name = "dummy";
-        support = new Interval(0,1);
-    }
-    
-    public ProbabilityDistribution(String newName, Interval newSupport) throws IntervalException
-    {
-        name = newName;
-        support = newSupport;
-    }
+//     public ProbabilityDistribution() throws IntervalException
+//     {
+//         name = "dummy";
+//         support = new Interval(0,1);
+//     }
+//     
+//     public ProbabilityDistribution(String newName, Interval newSupport) throws IntervalException
+//     {
+//         name = newName;
+//         support = newSupport;
+//     }
 
     /**
      * Getter method for the name of this distribution
