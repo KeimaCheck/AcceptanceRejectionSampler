@@ -1,4 +1,5 @@
-package distribution_samples;
+package arsmp;
+import arsmp.distributions.ProbabilityDistribution;
 
 import java.util.Random;
 import java.lang.Float;

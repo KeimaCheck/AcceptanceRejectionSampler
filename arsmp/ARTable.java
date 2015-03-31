@@ -1,4 +1,6 @@
-package distribution_samples;
+package arsmp;
+import arsmp.distributions.ProbabilityDistribution;
+
 
 import java.util.Hashtable;
 import java.lang.Float;

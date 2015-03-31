@@ -1,5 +1,5 @@
-package distribution_samples;
-
+package arsmp;
+import arsmp.distributions.ProbabilityDistribution;
 
 /**
  * Wraps ARTable with getter methods for statistical

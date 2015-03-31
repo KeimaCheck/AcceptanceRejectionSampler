@@ -1,5 +1,5 @@
-package distribution_samples;
-
+package arsmp;
+import arsmp.distributions.*;
 
 
 import static org.junit.Assert.*;

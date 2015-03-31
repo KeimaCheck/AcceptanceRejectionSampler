@@ -1,4 +1,4 @@
-package distribution_samples;
+package arsmp;
 
 import java.util.Date;
 import java.text.DateFormat;
