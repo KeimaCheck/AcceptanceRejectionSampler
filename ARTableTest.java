@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import java.util.Arrays;
+import java.lang.Math;
 
 /**
  * The test class ARTableTest.
@@ -139,6 +140,22 @@ public class ARTableTest
         
     }
     
+    public float meanSquaredError(float[] testValues, float desiredValue)
+    {
+        float sqErr;
+        float totalSqErr = 0;
+        float meanSqErr = 0;
+        
+        for (int i = 0; i < testValues.length; i++)
+        {
+            sqErr = (desiredValue - testValues[i])*(desiredValue-testValues[i]);
+            totalSqErr += sqErr;
+        }
+        
+        meanSqErr = totalSqErr / testValues.length;
+        return meanSqErr;
+    }
+    
     @Test
     public void verifySamples() throws IntervalException, IntervalTreeException
     {
@@ -153,6 +170,8 @@ public class ARTableTest
         float areaRatio;
         float spacingRatio;
         float area;
+        float spacingError;
+        
         
         int iterations = 100000;
         float samples[] = new float[iterations];
@@ -170,7 +189,8 @@ public class ARTableTest
         
         int lastFirst = 0;
         int countLocal = 0;
-        int intervalIndex = 0;        
+        int intervalIndex = 0;      
+        float theseDiffs[];
         for (int i = 0; i < iterations; i++)
         {
             if ( intervals[intervalIndex].contains(samples[i]) )
@@ -179,18 +199,22 @@ public class ARTableTest
             }
             else 
             {
-                
+                log.writeMessage("Verify percentage of samples in each interval\n");
                 sampleRatio = (float)countLocal / (float)iterations;
                 area = intervals[intervalIndex].getWidth() * heights[intervalIndex];
                 areaRatio = area / totalArea;
                 log.writeMessage(sampleRatio + " vs " + areaRatio + "\n");
-                spacingRatio = area / countLocal;
-                log.writeMessage(spacingRatio + "\n");
                 
-                log.writeEnumerated(Arrays.copyOfRange(diffs, lastFirst, i - 1));
+                log.writeMessage("Verify uniformity of samples within each interval\n");
+                spacingRatio = area / (countLocal - 1);
+                theseDiffs = Arrays.copyOfRange(diffs, lastFirst, i - 1);
+                spacingError = meanSquaredError(theseDiffs, spacingRatio);
+                log.writeMessage("Expected spacing: " + spacingRatio + "\n");
+                log.writeMessage("Mean squared error: " + spacingError + "\n");
+                
                 intervalIndex++;
-                lastFirst = i + 1;
-                countLocal = 0;
+                lastFirst = i;
+                countLocal = 1;
             }
             
         }
