@@ -143,26 +143,23 @@ public class ARTableTest
     public void verifySamples() throws IntervalException, IntervalTreeException
     {
         Logger log = new Logger("BESample-Verification");
-        float next;
-        int countLocal = 0;
-        int dumbIndex = 0;    // okay.
-        float sampleRatio;
-        float areaRatio;
-        float otherAreaRatio; // okay.
-        
-        int iterations = 100000;
         VerifyARTable verifyA1 = new VerifyARTable(polynomi1);
-        float samples[] = new float[iterations];
         
         Interval intervals[] = verifyA1.getIntervals();
         float heights[] = verifyA1.getHeights();
         float totalArea = verifyA1.getTotalArea();
         
+        float sampleRatio;
+        float areaRatio;
+        float spacingRatio;
+        float area;
+        
+        int iterations = 100000;
+        float samples[] = new float[iterations];
         for (int i = 0; i < iterations; i++)
         {
             samples[i] = verifyA1.sample();
         }
-
         Arrays.sort(samples);
 
         float diffs[] = new float[iterations - 1];
@@ -171,13 +168,12 @@ public class ARTableTest
             diffs[i] = samples[i+1] - samples[i];
         }
         
-        float area;
-        
-        int lastFirst = 0;    // okay.
-        
+        int lastFirst = 0;
+        int countLocal = 0;
+        int intervalIndex = 0;        
         for (int i = 0; i < iterations; i++)
         {
-            if ( intervals[dumbIndex].contains(samples[i]) )
+            if ( intervals[intervalIndex].contains(samples[i]) )
             {
                 countLocal++;
             }
@@ -185,13 +181,14 @@ public class ARTableTest
             {
                 
                 sampleRatio = (float)countLocal / (float)iterations;
-                area = intervals[dumbIndex].getWidth() * heights[dumbIndex];
+                area = intervals[intervalIndex].getWidth() * heights[intervalIndex];
                 areaRatio = area / totalArea;
                 log.writeMessage(sampleRatio + " vs " + areaRatio + "\n");
-                otherAreaRatio = area / countLocal;
-                log.writeMessage(otherAreaRatio + "\n");
+                spacingRatio = area / countLocal;
+                log.writeMessage(spacingRatio + "\n");
+                
                 log.writeEnumerated(Arrays.copyOfRange(diffs, lastFirst, i - 1));
-                dumbIndex++;
+                intervalIndex++;
                 lastFirst = i + 1;
                 countLocal = 0;
             }
