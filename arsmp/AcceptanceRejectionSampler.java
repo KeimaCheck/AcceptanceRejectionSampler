@@ -18,9 +18,6 @@ import java.lang.Float;
 // argument.
 public class AcceptanceRejectionSampler
 {
-    // instance variables - replace the example below with your own
-    private float x;
-    private float y;
     private Random generator;
     private ProbabilityDistribution distribution;
     private ARTable lookup;
@@ -64,34 +61,24 @@ public class AcceptanceRejectionSampler
     }
     
     /**
-     * Samples the upper half-plane for y in [0,1] uniformly and sets the internal state
-     */
-    private void samplePlaneUniformly()
-    {
-        if (lookup == null)     // default behavior
-        {
-            float a = (generator.nextFloat() * 2) - 1;
-            a = a * (Float.MAX_VALUE - 1);
-            float b = generator.nextFloat();
-            x = a;
-            y = b;
-        } else
-        {
-            // use the lookup table to prevent wasting space with lots of dud samples
-        }
-    }
-    
-    /**
-     * Samples the upper half-plane for y in [0,1] repeatedly until a point (x,y) is found
-     * below the graph of the probability density function, then return x.
+     * Samples the box-envelope function of the distribution, applying acceptance-rejection,
+     * until a value is found that is accepted, then returns that value.
      * 
+     * @returns A PSRN, such that with a large number of samples the collected data will
+     *          exhibit the statistical properties of the chosen distribution
      */
-    public float sampleDistribution()
+    public float sampleDistribution() throws IntervalException, IntervalTreeException
     {
+        float x;
+        float u;
+        
         do
         {
-            samplePlaneUniformly();
-        } while (y >= distribution.probabilityDensity(x));   // stop when y is found < f(x)
+            x = lookup.sample();        // sample x from g(x)
+            u = generator.nextFloat();  // and u from U(0,1);
+        } while (u < (distribution.probabilityDensity(x) / lookup.probabilityDensity(x)));     
+                                                                // if u < f(x)/g(x) holds,
+                                                                // then accept x as a realization of f(x)
         
         return x;
     }
