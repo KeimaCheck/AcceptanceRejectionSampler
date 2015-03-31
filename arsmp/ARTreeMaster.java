@@ -1,19 +1,21 @@
+package distribution_samples;
+
 
 /**
- * Write a description of class ARTree here.
+ * Write a description of class ARTreeMaster here.
  * 
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class ARTree
+public class ARTreeMaster
 {
     // instance variables - replace the example below with your own
     private int x;
 
     /**
-     * Constructor for objects of class ARTree
+     * Constructor for objects of class ARTreeMaster
      */
-    public ARTree()
+    public ARTreeMaster()
     {
         // initialise instance variables
         x = 0;

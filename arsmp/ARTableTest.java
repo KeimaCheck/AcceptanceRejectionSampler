@@ -1,3 +1,5 @@
+package distribution_samples;
+
 
 
 import static org.junit.Assert.*;

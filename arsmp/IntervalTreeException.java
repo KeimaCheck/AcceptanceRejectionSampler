@@ -1,3 +1,5 @@
+package distribution_samples;
+
 
 /**
  * Write a description of class IntervalTreeException here.

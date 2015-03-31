@@ -1,3 +1,5 @@
+package arsmp;
+
 
 /**
  * Write a description of class Interval here.

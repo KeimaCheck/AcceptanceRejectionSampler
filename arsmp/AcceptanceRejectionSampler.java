@@ -1,3 +1,5 @@
+package distribution_samples;
+
 import java.util.Random;
 import java.lang.Float;
 /**

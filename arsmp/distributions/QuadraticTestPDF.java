@@ -1,3 +1,5 @@
+package arsmp.distributions;
+import arsmp.*;
 
 /**
  * Simple finitely-supported PDF for testing the ARTable class

@@ -1,11 +1,13 @@
+package distribution_samples;
+
 
 /**
- * Write a description of interface TraversalProps here.
+ * Write a description of interface Traversal here.
  * 
  * @author (your name) 
  * @version (a version number or a date)
  */
-public interface TraversalProps
+public interface Traversal
 {
     /**
      * An example of a method header - replace this comment with your own

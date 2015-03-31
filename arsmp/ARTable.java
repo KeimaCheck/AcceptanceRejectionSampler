@@ -1,3 +1,5 @@
+package distribution_samples;
+
 import java.util.Hashtable;
 import java.lang.Float;
 import java.lang.Integer;
@@ -11,6 +13,7 @@ import java.io.BufferedReader;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 import java.util.InputMismatchException;
+
 /**
  * Implements generating and sampling from a boxed envelope function for use in
  * acceptance-rejection PRNG. The primary data structure is that of a binary search

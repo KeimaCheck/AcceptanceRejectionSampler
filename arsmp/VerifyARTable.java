@@ -1,3 +1,5 @@
+package distribution_samples;
+
 
 /**
  * Wraps ARTable with getter methods for statistical

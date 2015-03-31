@@ -1,3 +1,6 @@
+package arsmp.distributions;
+import arsmp.*;
+
 import java.lang.Math;
 /**
  * Write a description of class PolynomialTestPDF here.
