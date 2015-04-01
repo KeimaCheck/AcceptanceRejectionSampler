@@ -1,5 +1,6 @@
 package arsmp;
 import arsmp.distributions.ProbabilityDistribution;
+import arsmp.distributions.SymbolicallyCumulativeDistribution;
 
 import java.util.Random;
 import java.lang.Float;
@@ -42,7 +43,6 @@ public class AcceptanceRejectionSampler
         distribution = newDistribution;
         initializeLookup();
     }
-    
     
     /**
      * Instantiates a random number generator for use by this class

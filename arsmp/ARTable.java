@@ -1,6 +1,6 @@
 package arsmp;
 import arsmp.distributions.ProbabilityDistribution;
-
+import arsmp.distributions.SymbolicallyCumulativeDistribution;
 
 import java.util.Hashtable;
 import java.lang.Float;
