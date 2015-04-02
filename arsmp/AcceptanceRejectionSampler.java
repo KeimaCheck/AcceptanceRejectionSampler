@@ -76,7 +76,7 @@ public class AcceptanceRejectionSampler
         {
             x = lookup.sample();        // sample x from g(x)
             u = generator.nextFloat();  // and u from U(0,1);
-        } while (u < (distribution.probabilityDensity(x) / lookup.probabilityDensity(x)));     
+        } while (u >= (distribution.probabilityDensity(x) / lookup.probabilityDensity(x)));     
                                                                 // if u < f(x)/g(x) holds,
                                                                 // then accept x as a realization of f(x)
         

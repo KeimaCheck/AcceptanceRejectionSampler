@@ -8,7 +8,7 @@ import java.lang.Math;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class PolynomialTestPDF extends ProbabilityDistribution
+public class PolynomialTestPDF extends SymbolicallyCumulativeDistribution
 {
     private float[] coefficients;
 
@@ -35,7 +35,7 @@ public class PolynomialTestPDF extends ProbabilityDistribution
         {
             output += coefficients[i] + "-";
         }
-        output += "(" + support.getLeft() + "," + support.getRight() + " )-PolynomialDistr";
+        output += "(" + support.getLeft() + "," + support.getRight() + ")-PolynomialDistr";
         return output;
     }
     
@@ -52,6 +52,20 @@ public class PolynomialTestPDF extends ProbabilityDistribution
             for (int i = 2; i < coefficients.length; i++)
             {
                 output += coefficients[i] * Math.pow(x,i);
+            }
+        } else { output = 0; }
+        
+        return output;
+    }
+    
+    public float cumulativeDistribution(float x)
+    {
+        float output = 0;
+        if ( support.contains(x))
+        {
+            for(int i = 0; i <coefficients.length; i++)
+            {
+                output += coefficients[i] * Math.pow(x, i + 1) / (i + 1);
             }
         } else { output = 0; }
         

@@ -7,5 +7,6 @@ package arsmp.distributions;
  */
 public abstract class SymbolicallyCumulativeDistribution extends ProbabilityDistribution
 {
+    // must be normalized to zero at the left endpoint
     public abstract float cumulativeDistribution(float x);
 }

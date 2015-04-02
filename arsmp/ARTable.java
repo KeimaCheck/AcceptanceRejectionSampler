@@ -117,6 +117,12 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
             loaded = true;
             saveLookupTable();
         }
+            catch (IOException ex) 
+        {
+            System.out.println("Failed to read lookup table from disk");
+            System.out.println(ex.getMessage());
+        }
+        
     }
 
   
@@ -172,7 +178,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
      * 
      * @param filename   the name of the file to load from
      */
-    private void loadLookupTable() throws FileNotFoundException
+    private void loadLookupTable() throws FileNotFoundException, IOException
     {
         String filename = distribution.getName() + ".bef";
         Scanner scanHead;
@@ -202,10 +208,7 @@ public class ARTable    // extends ProbabilityDistribution? (because the boxed e
                 loadProbabilityIntervals[i] = new Interval(pILeft, pIRight);
                 loadAxisIntervals[i] = new Interval(aILeft, aIRight);
             }
-        } catch (IOException ex) 
-        {
-            System.out.println("Failed to read lookup table from disk");
-        } catch (IntervalException ex)
+        }  catch (IntervalException ex)
         {
             System.out.println(ex.getMessage());
         } catch (InputMismatchException ex)
